@@ -1,0 +1,138 @@
+What are modules?                                                                                        
+Modules are similar to functions 
+Syntax:
+  module module_name( output output_name );
+    some code 
+  endmodule 
+If there is no code written in module it will behave as a wire giving zero output 
+
+
+WIRES
+They are unidirectional 
+Syntax :
+assign output = input;
+This means that the output is continuously given the input value 
+Sample code:
+    module top_module( 
+    input a, b, c,
+    output w, x, y, z 
+);
+    assign {w, x, y, z} = {a, b, b, c};
+endmodule
+(refer : https://hdlbits.01xz.net/wiki/Wire4)
+
+
+NOT GATE
+in c++ we use != in verilog we use =~ FOR NOT GATE 
+EXAMPLE:
+module top_module( input in, output out );
+assign out =~ in ;
+endmodule
+
+
+AND GATE 
+Verilog has separate bitwise-AND (&) and logical-AND (&&) operators, like C.
+Since we're working with a one-bit here, it doesn't matter which we choose.
+EXAMPLE : 
+module top_module( 
+    input a, 
+    input b, 
+    output out );
+assign out = a&b;
+endmodule
+
+
+OR GATE 
+Verilog has separate bitwise-OR (|) and logical-OR (||) operators, like C.
+Since we're working with a one-bit here, it doesn't matter which we choose.
+module top_module(
+    input a,
+    input b,
+    output out
+);
+    assign out = a | b;
+endmodule
+
+
+NOR GATE : 
+module top_module( 
+    input a, 
+    input b, 
+    output out );
+    assign out =~ (a|b); // Notice : That i have used bracket to specify priority
+endmodule
+
+
+XOR GATE :
+The bitwise-XOR operator is ^. There is no logical-XOR operator.
+
+
+DECLARING WIRE FOR COMPLEX CIRCUIT:
+SYNTAX: 
+wire wire_name;
+refer : https://hdlbits.01xz.net/wiki/Wire_decl for more explaination
+
+
+------VECTORS-------
+wire [99:0] my_vector;      // Declare a 100-element vector
+assign out = my_vector[10]; // Part-select one bit out of the vector
+
+Declaring Vectors
+Vectors must be declared:
+type [upper:lower] vector_name;
+type specifies the datatype of the vector. This is usually wire or reg. 
+If you are declaring a input or output port, the type can additionally
+include the port type (e.g., input or output) as well. Some examples:
+
+wire [7:0] w;         // 8-bit wire
+reg  [4:1] x;         // 4-bit reg
+output reg [0:0] y;   // 1-bit reg that is also an output port (this is still a vector)
+input wire [3:-2] z;  // 6-bit wire input (negative ranges are allowed)
+output [3:0] a;       // 4-bit output wire. Type is 'wire' unless specified otherwise.
+wire [0:7] b;         // 8-bit wire where b[0] is the most-significant bit.
+
+EXAMPLE:
+module top_module ( 
+    input wire [2:0] vec,
+    output wire [2:0] outv,
+    output wire o2,
+    output wire o1,
+    output wire o0  ); // Module body starts after module declaration
+assign outv=vec;
+    assign o0=vec[0];
+    assign o1 =vec[1];
+    assign o2 =vec[2];
+endmodule
+
+
+IMPLICIT NETS
+wire [2:0] a, c;   // Two vectors
+assign a = 3'b101;  // a = 101
+assign b = a;       // b =   1  implicitly-created wire matlab verilog ne khud 1-bit ka wire bana 
+                                diya because tumne declare nai kiya
+assign c = b;       // c = 001  <-- bug isiliye kyuki tum chahte the ki c=a aaye but aabhi tumne 
+                                    ye thik se declare nai kiya ki b vector hai and 1-bit wire nai
+my_module i1 (d,e); // d and e are implicitly one-bit wide if not declared.
+                    // This could be a bug if the port was intended to be a vector.
+
+Adding `default_nettype none would make the second line of code an error, 
+which makes the bug more visible.
+
+
+UNPACKED VS. PACKED ARRAYS
+reg [7:0] mem [255:0];   // 256 unpacked elements, each of which is a 8-bit packed vector of reg
+                            here [7:0] ek packed array hai aur [255:0] unpacked 
+                            yaha hum k rahe hai ki hum 256 bit k reg. ko 8 8 bit k packets main
+                            divide kar rahe hai (easy way to understand but not sure if it is right)
+reg mem2 [28:0];         // 29 unpacked elements, each of which is a 1-bit reg.
+
+
+ACCESSING VECTOR ELEMENTS : PART - SELECT
+The part-select operator can be used to access a portion of a vector:
+w[3:0]      // Only the lower 4 bits of w
+x[1]        // The lowest bit of x
+x[1:1]      // ...also the lowest bit of x    
+z[-1:-2]    // Two lowest bits of z
+b[3:0]      // Illegal. Vector part-select must match the direction of the declaration.
+b[0:3]      // The *upper* 4 bits of b.
+assign w[3:0] = b[0:3];    // Assign upper 4 bits of b to lower 4 bits of w. w[3]=b[0], w[2]=b[1], etc.
