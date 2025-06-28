@@ -2,7 +2,7 @@ What are modules?
 Modules are similar to functions 
 Syntax:
   module module_name( output output_name );
-    some code 
+-    some code 
   endmodule 
 If there is no code written in module it will behave as a wire giving zero output 
 
@@ -152,3 +152,73 @@ assign out[15:0] = {in[7:0], in[15:8]};    // This is the same thing.
 assign out = {in[7:0], in[15:8]};       // This is different. The 16-bit vector on the right is extended to
                                         // match the 24-bit vector on the left, so out[23:16] are zero.
                                         // In the first two examples, out[23:16] are not assigned.
+
+{num{vector}}
+This replicates vector by num times. num must be a constant. Both sets of braces are required.
+
+Examples:
+
+{5{1'b1}}           // 5'b11111 (or 5'd31 or 5'h1f)
+{2{a,b,c}}          // The same as {a,b,c,a,b,c}
+{3'd5, {2{3'd6}}}   // 9'b101_110_110. It's a concatenation of 101 with
+                    // the second vector, which is two copies of 3'b110.
+
+
+MODULE K ANDAR MODULE
+Great question.
+
+---
+
+### 💡 What does `mod_a` mean?
+
+In Verilog:
+
+```verilog
+mod_a instance1 (a, b, out);
+```
+
+* `mod_a` is the **name of another module** — a submodule that has been defined **elsewhere**.
+* You are creating an **instance** of that module, just like calling a function or creating an object in other languages.
+* `instance1` is the **instance name** (you can call it anything — like `u1`, `m1`, etc.).
+* `(a, b, out)` are the **signals you're connecting** to the module’s **ports**.
+
+---
+
+### 🧱 Think of it like this:
+
+If this is defined somewhere:
+
+```verilog
+module mod_a (
+    input in1,
+    input in2,
+    output out
+);
+    // Some logic here...
+endmodule
+```
+
+Then when you write:
+
+```verilog
+mod_a instance1 (a, b, out);
+```
+
+You are telling Verilog:
+
+> “Take the module called `mod_a`, create one copy of it called `instance1`, and hook it up to my wires: connect `a` to `in1`, `b` to `in2`, and `out` to `out`.”
+
+---
+
+### 📦 Summary:
+
+| Term          | Meaning                                                     |
+| ------------- | ----------------------------------------------------------- |
+| `mod_a`       | The name of a predefined submodule                          |
+| `instance1`   | The instance name (you choose it)                           |
+| `(a, b, out)` | External wires connected to submodule ports by **position** |
+
+So, **`mod_a` is just the name of the module you are instantiating** — in this problem, it’s already written for you by HDLBits.
+
+Let me know if you want to see what the full module hierarchy looks like visually.
+
