@@ -165,14 +165,9 @@ Examples:
 
 
 MODULE K ANDAR MODULE
-Great question.
-
----
-
 ### 💡 What does `mod_a` mean?
 
 In Verilog:
-
 ```verilog
 mod_a instance1 (a, b, out);
 ```
@@ -198,6 +193,18 @@ module mod_a (
 endmodule
 ```
 
+UNNAMED PORTS
+module top_module ( 
+    input a, 
+    input b, 
+    input c,
+    input d,
+    output out1,
+    output out2
+);
+    mod_a instance1(out1, out2, a, b, c, d);
+endmodule
+
 Then when you write:
 
 ```verilog
@@ -219,6 +226,4 @@ You are telling Verilog:
 | `(a, b, out)` | External wires connected to submodule ports by **position** |
 
 So, **`mod_a` is just the name of the module you are instantiating** — in this problem, it’s already written for you by HDLBits.
-
-Let me know if you want to see what the full module hierarchy looks like visually.
 
