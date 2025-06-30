@@ -27,6 +27,7 @@ git remote add origin github-repo-ka-link
 
 now you done changes in the project and you want to show it on github 
 git push origin branch_name
+while creating your new branch make sure your master branch is up to date
 
 you want to create new branch:git branch branch_name
 you want to work on some branch : git checkout some_branch_name
@@ -56,3 +57,15 @@ Making forked project even with main project
    b. git fetch --all --prune(prune the one that are deleted will also be fetched)
    c. git reset --hard upstream/main
    d. git push origin main 
+3. a. git pull upstream main
+   b. git push origin main
+
+you are working and there are many commits and you want to make it into 1 commit
+1. Reset and all commits will be unstaged and there will be 1 commit and again commit to it will 
+   come down to 1 commit
+2. https://www.youtube.com/watch?v=apGV9Kg7ics  1:00:20 
+
+Merge Conflict
+like maanle tune 3rd line pe change kiya and kissi dusre ne bhi 3rd line pe change kiya toh git 
+confuse ho jayega toh ye hai merge conflicts
+toh isse dono baat karke solve karo aur thik karo ab sab chiz k command nai hote
