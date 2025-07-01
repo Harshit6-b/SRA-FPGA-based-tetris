@@ -1,0 +1,11 @@
+REPRESENTING NEGATIVE NUMBERS
+MSB is designated to show sign. 1 represents negative, 0 represents positive.
+Example: (8 bit binary number)
+(1001 0011) = -35
+(0111 1111) = 127
+Range for 8 bit number - -127 to 127
+Two zeros 1000 0000 and 0000 0000 having -0 and 0 is a bit complicated
+
+ADDITION AND SUBTRACTION OF INTEGERS IN BINARY 
+if same sign then add and if different sign then subtract
+for subtraction its vice versa of add
