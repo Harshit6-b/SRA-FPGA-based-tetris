@@ -9,3 +9,87 @@ Two zeros 1000 0000 and 0000 0000 having -0 and 0 is a bit complicated
 ADDITION AND SUBTRACTION OF INTEGERS IN BINARY 
 if same sign then add and if different sign then subtract
 for subtraction its vice versa of add
+
+
+
+
+
+
+DUALITY PRINCIPLE
+replace 0 with 1 and also replace OR gate with AND gate
+
+🔹 SOP (Sum of Products)
+Definition: A Boolean expression written as ORs (sums) of ANDs (products).
+Form: A·B + A'·C + B·C'
+Each product term (AND) is called a minterm.
+It is 1 for the combination of inputs that make the function true (1).
+
+🔹 POS (Product of Sums)
+Definition: A Boolean expression written as ANDs (products) of ORs (sums).
+Form: (A + B)(A' + C)(B + C')
+Each sum term (OR) is called a maxterm.
+It is 0 for the combination of inputs that make the function false (0).
+
+🔹 What is a Minterm?
+A minterm is a product (AND) of all input variables, where each variable appears once,
+either in true or complemented form.
+A minterm evaluates to 1 for exactly one combination of input values.
+Used in SOP (Sum of Products) form.
+
+🔸 What is a Maxterm?
+A maxterm is a sum (OR) of all input variables, where each variable appears once,
+in true or complemented form.
+A maxterm evaluates to 0 for exactly one combination of inputs.
+Used in POS (Product of Sums) form.
+
+🔹 Canonical Forms
+Every term contains all variables of the function — either in complemented or uncomplemented form.
+There are two main types:
+
+1. Canonical Sum of Products (SOP)
+A sum (+) of minterms
+Each minterm is an AND (·) of all input variables, either in true or complemented form
+The function equals 1 for these minterms
+General form:
+F(A, B, C) = A'B'C + AB'C' + ABC
+
+2. Canonical Product of Sums (POS)
+A product (·) of maxterms
+Each maxterm is an OR (+) of all input variables, either in true or complemented form
+The function equals 0 for these maxterms
+General form:
+F(A, B, C) = (A + B + C')(A' + B + C)(A + B' + C)
+
+kmaps
+qm method
+area delay model
+
+✅ What is a Multiplexer (MUX)?
+A multiplexer is a combinational logic circuit that selects one input from many and 
+forwards it to a single output line based on select (control) signals.
+✅ General Formula
+For a 2ⁿ-to-1 MUX:
+Number of inputs = 2ⁿ
+Number of select lines = n
+Number of outputs = 1
+
+✅Decoders
+A decoder is a combinational circuit that converts binary inputs into a one-hot output —
+meaning only one output is high (1) at a time, corresponding to the binary input value.
+n inputs and 2^n outputs OR 1 input and many outputs
+Decoder takes maanlo 3 inputs and gives 8 outputs jaise ki abc,abc',ab'c,ab'c',...... aasa
+Decoder with inverted output gives a+b+c,a+b+c',a+b'+c,.... aasa
+Decoder with enable main ek aur signal AND hoga jaise ki power line ya koi bus
+
+🔷 Encoder
+🔹 What it is:
+A combinational circuit that encodes a one-hot input into an n-bit binary output.
+🔹 Structure:
+Inputs: 2ⁿ
+Outputs: n
+🔸 Problems:
+❌ Multiple inputs high: Output is ambiguous
+❌ No inputs high: Output is invalid
+✅ Solution: Priority Encoder
+Assigns priority to inputs (e.g., D₃ > D₂ > D₁ > D₀)
+Adds a Valid output signal to indicate valid input
