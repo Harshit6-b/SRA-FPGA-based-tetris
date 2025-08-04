@@ -27,7 +27,6 @@ module hdmi_top(
 
     TMDS_encoder encoder_R (
         .pixclk(pixclk),
-        .clk_TMDS(clk_TMDS),
         .VD(R_data),
         .CD(CD),
         .VDE(VDE),
