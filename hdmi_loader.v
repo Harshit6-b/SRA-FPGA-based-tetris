@@ -1,9 +1,21 @@
 module hdmi_loader(
-input pixclk,
+input clk_fast,
 output reg VDE,
 output reg [1:0]CD
 );
 
+reg [3:0] count = 0;
+reg pixclk = 0;
+
+always @(posedge clk_fast) begin
+    if(count == 9) begin
+        count <= 0;
+        clk_fast <= ~clk_fast;  // divide by 10
+    end else
+        count <= count + 1;
+end
+
+	
 reg [10:0] hcount;
 reg [9:0] vcount;
 reg hsync, vsync;
