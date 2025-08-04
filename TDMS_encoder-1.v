@@ -44,7 +44,6 @@ module TMDS_encoder (
     end
            integer ones =0;
             integer zeros=0;
-           reg signed [4:0] disparity; // range of possible imbalance from -31 to +31
 
     // Final TMDS output based on disparity and control
     always @(posedge pixclk) begin
