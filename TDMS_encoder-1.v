@@ -62,7 +62,7 @@ module TMDS_encoder (
             zeros = 8 - ones;
 
             // Update TMDS output based on running disparity
-		if((disparity=0 || ones=4)) begin
+		if((disparity==0 || ones==4)) begin
 			if(iTDMS[8]) begin
 				TMDS[9]=0;
 				TMDS[8]=1;
