@@ -29,21 +29,13 @@ always @(posedge clk_TMDS) begin
     TMDS_shift_red   <= TMDS_red;
     TMDS_shift_green <= TMDS_green;
     TMDS_shift_blue  <= TMDS_blue;
-  end else begin
-    if (TMDS_shift_load)
-    TMDS_shift_red <= TMDS_red;
-else if (TMDS_mod10 < 10)
-    TMDS_shift_red <= {1'b0, TMDS_shift_red[9:1]};
-if (TMDS_shift_load)
-    TMDS_shift_green <= TMDS_green;
-else if (TMDS_mod10 < 10)
-  TMDS_shift_green <= {1'b0, TMDS_shift_green[9:1]};
-if (TMDS_shift_load)
-    TMDS_shift_blue <= TMDS_blue;
-else if (TMDS_mod10 < 10)
-  TMDS_shift_blue <= {1'b0, TMDS_shift_blue[9:1]};
+  end else if (TMDS_mod10 < 10) begin
+    TMDS_shift_red   <= {1'b0, TMDS_shift_red[9:1]};
+    TMDS_shift_green <= {1'b0, TMDS_shift_green[9:1]};
+    TMDS_shift_blue  <= {1'b0, TMDS_shift_blue[9:1]};
   end
 end
+
 
 // Assign outputs (non-differential)
 assign TMDSp = {TMDS_shift_red[0], TMDS_shift_green[0], TMDS_shift_blue[0]};
