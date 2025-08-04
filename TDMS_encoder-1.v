@@ -48,6 +48,7 @@ module TMDS_encoder (
     // Final TMDS output based on disparity and control
     always @(posedge pixclk) begin
         if (VDE) begin
+		ones=0;
 	ones = ones + (iTDMS[0] ? 1 : 0);
 	ones = ones + (iTDMS[1] ? 1 : 0);
 	ones = ones + (iTDMS[2] ? 1 : 0);
