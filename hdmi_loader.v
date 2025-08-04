@@ -59,9 +59,7 @@ reg [4:0] temp ;
 		        end
 		    endcase
 		end
-		default : begin
-			VDE<=1;
-		end
+		default :VDE<=1;
 	      endcase
 	      
 	      CD <= {vsync , hsync};
