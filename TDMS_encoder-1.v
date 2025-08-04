@@ -1,10 +1,21 @@
 module TMDS_encoder (
-    input pixclk,
+    input clk_fast,
     input [7:0] VD,       // Video Data
     input [1:0] CD,       // Control Data (hsync, vsync)
     input  VDE,            // Video Data Enable
     output reg [9:0] TMDS // Output TMDS encoded signal
 );
+	reg [3:0] count = 0;
+reg pixclk= 0;
+
+always @(posedge clk_fast) begin
+    if(count == 9) begin
+        count <= 0;
+        pixclk <= ~pixclk;  // divide by 10
+    end else
+        count <= count + 1;
+end
+
 
     reg [8:0] iTDMS;                  // Intermediate TMDS encoding
     reg signed [4:0] disparity = 0;   // Running disparity
