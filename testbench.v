@@ -2,8 +2,7 @@
 
 module hdmi_top_tb;
 
-  reg pixclk = 0;
-  reg clk_TMDS = 0;
+  reg clk_fast = 0;        // 400 MHz clock (10x pixel clock)
   wire [2:0] TMDSp;
   wire [2:0] TMDSn;
   wire TMDSp_clock;
@@ -11,26 +10,22 @@ module hdmi_top_tb;
 
   // Instantiate the design under test
   hdmi_top uut (
-    .pixclk(pixclk),
-    .clk_TMDS(clk_TMDS),
+    .clk_fast(clk_fast),       // 400 MHz
     .TMDSp(TMDSp),
     .TMDSn(TMDSn),
     .TMDSp_clock(TMDSp_clock),
     .TMDSn_clock(TMDSn_clock)
   );
 
-  // Generate 40 MHz pixel clock
-  always #12.5 pixclk = ~pixclk; // 25 ns period (40 MHz)
-
-  // Generate 400 MHz TMDS clock
-  always #1.25 clk_TMDS = ~clk_TMDS; // 2.5 ns period (400 MHz)
+  // Generate 400 MHz fast clock (period 2.5 ns)
+  always #1.25 clk_fast = ~clk_fast;
 
   initial begin
     $display("Starting HDMI simulation...");
-    $dumpfile("hdmi_top_tb.vcd");  // For GTKWave or other waveform viewers
+    $dumpfile("hdmi_top_tb.vcd");
     $dumpvars(0, hdmi_top_tb);
 
-    #10000; // Run simulation for 10 µs
+    #10000; // Run simulation for 10 us
 
     $display("Simulation finished.");
     $finish;
