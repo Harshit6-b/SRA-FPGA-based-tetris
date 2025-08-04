@@ -1,20 +1,31 @@
 module serializer(
   input  [9:0] TMDS_red,
   input  [9:0] TMDS_green,
-  input  [9:0] TMDS_blue,
-  input        pixclk,       // 40 MHz pixel clock
-  input        clk_TMDS,     // 400 MHz clock input (10x pixel clock) from outside
+  input  [9:0] TMDS_blue,      
+  input        clk_fast,     
   output       TMDSp_clock,
   output       TMDSn_clock,
   output [2:0] TMDSp,
   output [2:0] TMDSn
 );
 
+reg [3:0] count = 0;
+reg pixclk = 0;
+
+always @(posedge clk_fast) begin
+    if(count == 9) begin
+        count <= 0;
+        pixclk <= ~pixclk;  // divide by 10
+    end else
+        count <= count + 1;
+end
+
+  
 // Shift counters
 reg [3:0] TMDS_mod10 = 0;
 reg TMDS_shift_load = 0;
 
-always @(posedge clk_TMDS) begin 
+  always @(posedge clk_fast) begin 
   TMDS_mod10 <= (TMDS_mod10 == 9) ? 0 : TMDS_mod10 + 1;
   TMDS_shift_load <= (TMDS_mod10 == 9);
 end
@@ -24,7 +35,7 @@ reg [9:0] TMDS_shift_red   = 10'b0;
 reg [9:0] TMDS_shift_green = 10'b0;
 reg [9:0] TMDS_shift_blue  = 10'b0;
 
-always @(posedge clk_TMDS) begin 
+  always @(posedge clk_fast) begin 
   if (TMDS_shift_load) begin 
     TMDS_shift_red   <= TMDS_red;
     TMDS_shift_green <= TMDS_green;
