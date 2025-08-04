@@ -42,13 +42,13 @@ module TMDS_encoder (
 	iTDMS[7] = use_XNOR ? ~(iTDMS[6] ^ VD[7]) : (iTDMS[6] ^ VD[7]);
         iTDMS[8] = ~use_XNOR; // Ninth bit is inverse of use_XNOR
     end
-           integer ones ;
-            integer zeros;
-           
+           integer ones =0;
+            integer zeros=0;
+           reg signed [4:0] disparity; // range of possible imbalance from -31 to +31
+
     // Final TMDS output based on disparity and control
     always @(posedge pixclk) begin
         if (VDE) begin
-           ones = 0;
 	ones = ones + (iTDMS[0] ? 1 : 0);
 	ones = ones + (iTDMS[1] ? 1 : 0);
 	ones = ones + (iTDMS[2] ? 1 : 0);
