@@ -42,67 +42,68 @@ module TMDS_encoder (
 	iTDMS[7] = use_XNOR ? ~(iTDMS[6] ^ VD[7]) : (iTDMS[6] ^ VD[7]);
         iTDMS[8] = ~use_XNOR; // Ninth bit is inverse of use_XNOR
     end
-           integer ones =0;
-            integer zeros=0;
+           reg [3:0] ones;
+	   reg [3:0] zeros;
+
 
     // Final TMDS output based on disparity and control
     always @(posedge pixclk) begin
         if (VDE) begin
-		ones=0;
-	ones = ones + (iTDMS[0] ? 1 : 0);
-	ones = ones + (iTDMS[1] ? 1 : 0);
-	ones = ones + (iTDMS[2] ? 1 : 0);
-	ones = ones + (iTDMS[3] ? 1 : 0);
-	ones = ones + (iTDMS[4] ? 1 : 0);
-	ones = ones + (iTDMS[5] ? 1 : 0);
-	ones = ones + (iTDMS[6] ? 1 : 0);
-	ones = ones + (iTDMS[7] ? 1 : 0);
+		ones<=0;
+	ones <= ones + (iTDMS[0] ? 1 : 0);
+	ones <= ones + (iTDMS[1] ? 1 : 0);
+	ones <= ones + (iTDMS[2] ? 1 : 0);
+	ones <= ones + (iTDMS[3] ? 1 : 0);
+	ones <= ones + (iTDMS[4] ? 1 : 0);
+	ones <= ones + (iTDMS[5] ? 1 : 0);
+	ones <= ones + (iTDMS[6] ? 1 : 0);
+	ones <= ones + (iTDMS[7] ? 1 : 0);
 
 
-            zeros = 8 - ones;
+            zeros <= 8 - ones;
 
             // Update TMDS output based on running disparity
 		if((disparity==0 || ones==4)) begin
 			if(iTDMS[8]) begin
-				TMDS[9]=0;
-				TMDS[8]=1;
-				TMDS[7:0]=iTDMS[7:0];
-				disparity = disparity + ones - zeros;
+				TMDS[9]<=0;
+				TMDS[8]<=1;
+				TMDS[7:0]<=iTDMS[7:0];
+				disparity <= disparity + ones - zeros;
 			end
 			else begin
-				TMDS[9]=1;
-				TMDS[8]=0;
-				TMDS[7:0]=~iTDMS[7:0];
-				disparity = disparity - ones + zeros;
+				TMDS[9]<=1;
+				TMDS[8]<=0;
+				TMDS[7:0]<=~iTDMS[7:0];
+				disparity <= disparity - ones + zeros;
 		        end
 		end
 		else begin 
 			if ((disparity>0 && ones>4) || (disparity < 0 && ones<4)) begin
 				if (iTDMS[8]==0) begin
-					TMDS[9]=1;
-					TMDS[8]=0;
-					TMDS[7:0]=~iTDMS[7:0];
-					disparity = disparity - ones + zeros;
+					TMDS[9]<=1;
+					TMDS[8]<=0;
+					TMDS[7:0]<=~iTDMS[7:0];
+					disparity <= disparity - ones + zeros;
 				end
 				else begin
-					TMDS[9]=1;
-					TMDS[8]=1;
-					TMDS[7:0]=~iTDMS[7:0];
-					disparity = disparity - ones + zeros + 2;
+					TMDS[9]<=1;
+					TMDS[8]<=1;
+					TMDS[7:0]<=~iTDMS[7:0];
+					disparity <= disparity - ones + zeros + 2;
 				end
 			end
 			else begin
 				if (iTDMS[8]==0) begin
-					TMDS[9]=0;
-					TMDS[8]=0;
-					TMDS[7:0]=iTDMS[7:0];
-					disparity = disparity - ones + zeros- 2;
+					TMDS[9]<=0;
+					TMDS[8]<=0;
+					TMDS[7:0]<=iTDMS[7:0];
+					disparity <= disparity - ones + zeros- 2;
 				end
 				else begin 
-					TMDS[9]=0;
-					TMDS[8]=1;
-					TMDS[7:0]=iTDMS[7:0];
-					disparity = disparity + ones - zeros;
+					TMDS[9]<=0;
+					TMDS[8]<=1;
+					TMDS[7:0]<=iTDMS[7:0];
+					disparity <= disparity + ones - zeros;
 				end
 			end
 		end
