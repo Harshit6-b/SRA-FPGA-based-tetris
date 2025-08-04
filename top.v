@@ -1,6 +1,6 @@
 module hdmi_top(
     input pixclk,
-    input reset,
+    input clk_TMDS,
     output [2:0] TMDSp,
     output [2:0] TMDSn,
     output TMDSp_clock,
@@ -21,13 +21,13 @@ module hdmi_top(
 
     hdmi_loader timing_gen (
         .pixclk(pixclk),
-        .reset(reset),
         .VDE(VDE),
         .CD(CD)
     );
 
     TMDS_encoder encoder_R (
         .pixclk(pixclk),
+        .clk_TMDS(clk_TMDS)
         .VD(R_data),
         .CD(CD),
         .VDE(VDE),
@@ -55,6 +55,7 @@ module hdmi_top(
         .TMDS_green(TMDS_green),
         .TMDS_blue(TMDS_blue),
         .pixclk(pixclk),
+        .clk_TMDS(clk_TMDS),
         .TMDSp(TMDSp),
         .TMDSn(TMDSn),
         .TMDSp_clock(TMDSp_clock),
