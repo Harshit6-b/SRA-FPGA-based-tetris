@@ -62,7 +62,7 @@ module TMDS_encoder (
             zeros = 8 - ones;
 
             // Update TMDS output based on running disparity
-            if((disparity>0 && ones>4) || (disparity<0 && ones< 4)) begin
+		if((disparity=0 || ones=4)) begin
 			if(iTDMS[8]) begin
 				TMDS[9]=0;
 				TMDS[8]=1;
@@ -73,7 +73,7 @@ module TMDS_encoder (
 				TMDS[9]=1;
 				TMDS[8]=0;
 				TMDS[7:0]=~iTDMS[7:0];
-				disparity = disparity + ones - zeros;
+				disparity = disparity - ones + zeros;
 		        end
 		end
 		else begin 
@@ -82,13 +82,13 @@ module TMDS_encoder (
 					TMDS[9]=1;
 					TMDS[8]=0;
 					TMDS[7:0]=~iTDMS[7:0];
-					disparity = disparity + ones - zeros;
+					disparity = disparity - ones + zeros;
 				end
 				else begin
 					TMDS[9]=1;
 					TMDS[8]=1;
 					TMDS[7:0]=~iTDMS[7:0];
-					disparity = disparity + ones - zeros + 2;
+					disparity = disparity - ones + zeros + 2;
 				end
 			end
 			else begin
@@ -96,7 +96,7 @@ module TMDS_encoder (
 					TMDS[9]=0;
 					TMDS[8]=0;
 					TMDS[7:0]=iTDMS[7:0];
-					disparity = disparity + ones - zeros- 2;
+					disparity = disparity - ones + zeros- 2;
 				end
 				else begin 
 					TMDS[9]=0;
