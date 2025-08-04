@@ -1,18 +1,28 @@
 module hdmi_top(
-    input pixclk,
-    input clk_TMDS,
+    input clk_fast,        // 10x pixel clock (e.g. 400 MHz)
     output [2:0] TMDSp,
     output [2:0] TMDSn,
     output TMDSp_clock,
     output TMDSn_clock
 );
 
+    // Generate pixclk by dividing clk_fast by 10 once
+    reg [3:0] count = 0;
+    reg pixclk = 0;
+    always @(posedge clk_fast) begin
+        if(count == 9) begin
+            count <= 0;
+            pixclk <= ~pixclk;
+        end else begin
+            count <= count + 1;
+        end
+    end
+
     wire VDE;
     wire [1:0] CD;
 
     wire [7:0] R_data, G_data, B_data;
 
-    // Example color bars
     assign R_data = (VDE) ? 8'hFF : 8'h00;
     assign G_data = (VDE) ? 8'h00 : 8'h00;
     assign B_data = (VDE) ? 8'h00 : 8'h00;
@@ -20,13 +30,13 @@ module hdmi_top(
     wire [9:0] TMDS_red, TMDS_green, TMDS_blue;
 
     hdmi_loader timing_gen (
-        .pixclk(pixclk),
+        .clk_fast(clk_fast),     // now passing divided pixclk (pixel clock)
         .VDE(VDE),
         .CD(CD)
     );
 
     TMDS_encoder encoder_R (
-        .pixclk(pixclk),
+        .clk_fast(clk_fast),     // pixel clock
         .VD(R_data),
         .CD(CD),
         .VDE(VDE),
@@ -34,7 +44,7 @@ module hdmi_top(
     );
 
     TMDS_encoder encoder_G (
-        .pixclk(pixclk),
+        .clk_fast(clk_fast),
         .VD(G_data),
         .CD(CD),
         .VDE(VDE),
@@ -42,7 +52,7 @@ module hdmi_top(
     );
 
     TMDS_encoder encoder_B (
-        .pixclk(pixclk),
+        .clk_fast(clk_fast),
         .VD(B_data),
         .CD(CD),
         .VDE(VDE),
@@ -53,13 +63,11 @@ module hdmi_top(
         .TMDS_red(TMDS_red),
         .TMDS_green(TMDS_green),
         .TMDS_blue(TMDS_blue),
-        .pixclk(pixclk),
-        .clk_TMDS(clk_TMDS),
-        .TMDSp(TMDSp),
-        .TMDSn(TMDSn),
+        .clk_fast(clk_fast),   // pass the original fast clock here!
         .TMDSp_clock(TMDSp_clock),
-        .TMDSn_clock(TMDSn_clock)
+        .TMDSn_clock(TMDSn_clock),
+        .TMDSp(TMDSp),
+        .TMDSn(TMDSn)
     );
 
 endmodule
-
