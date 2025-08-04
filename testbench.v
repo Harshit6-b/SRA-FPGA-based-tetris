@@ -1,67 +1,39 @@
 `timescale 1ns / 1ps
 
-module hdmi_tb();
+module hdmi_top_tb;
 
-    // Input clocks and reset
-    reg pixclk;        // 40 MHz pixel clock
-    reg clk_TMDS;      // 400 MHz TMDS serialization clock
-    reg reset;
+  reg pixclk = 0;
+  reg clk_TMDS = 0;
+  wire [2:0] TMDSp;
+  wire [2:0] TMDSn;
+  wire TMDSp_clock;
+  wire TMDSn_clock;
 
-    // HDMI TMDS Outputs
-    wire [2:0] TMDSp;
-    wire [2:0] TMDSn;
-    wire TMDSp_clock;
-    wire TMDSn_clock;
+  // Instantiate the design under test
+  hdmi_top uut (
+    .pixclk(pixclk),
+    .clk_TMDS(clk_TMDS),
+    .TMDSp(TMDSp),
+    .TMDSn(TMDSn),
+    .TMDSp_clock(TMDSp_clock),
+    .TMDSn_clock(TMDSn_clock)
+  );
 
-    // Instantiate the top-level HDMI module
-    hdmi_top uut (
-        .pixclk(pixclk),
-        .clk_TMDS(clk_TMDS),
-        .reset(reset),
-        .TMDSp(TMDSp),
-        .TMDSn(TMDSn),
-        .TMDSp_clock(TMDSp_clock),
-        .TMDSn_clock(TMDSn_clock)
-    );
+  // Generate 40 MHz pixel clock
+  always #12.5 pixclk = ~pixclk; // 25 ns period (40 MHz)
 
-    // Generate 40 MHz pixel clock (period = 25 ns)
-    initial begin
-        pixclk = 0;
-        forever #(12.5) pixclk = ~pixclk;
-    end
+  // Generate 400 MHz TMDS clock
+  always #1.25 clk_TMDS = ~clk_TMDS; // 2.5 ns period (400 MHz)
 
-    // Generate 400 MHz TMDS clock (period = 2.5 ns)
-    initial begin
-        clk_TMDS = 0;
-        forever #(1.25) clk_TMDS = ~clk_TMDS;
-    end
+  initial begin
+    $display("Starting HDMI simulation...");
+    $dumpfile("hdmi_top_tb.vcd");  // For GTKWave or other waveform viewers
+    $dumpvars(0, hdmi_top_tb);
 
-    // Stimulus
-    initial begin
-        $display("Starting HDMI simulation...");
+    #10000; // Run simulation for 10 µs
 
-        // Initialize reset
-        reset = 1;
-        #100;
-        reset = 0;
-
-        // Run simulation for some time
-        #200000; // Adjust as needed to simulate enough lines/frames
-
-        $display("Ending simulation at time=%g", $time);
-        $finish;
-    end
-
-    // Optional: Monitor TMDS outputs
-    initial begin
-        $monitor("Time=%g | TMDSp=%b | TMDSn=%b | TMDSp_clk=%b | TMDSn_clk=%b", 
-                 $time, TMDSp, TMDSn, TMDSp_clock, TMDSn_clock);
-    end
-
-    // Optional: Dump waveform (for GTKWave)
-    initial begin
-        $dumpfile("hdmi_tb.vcd");
-        $dumpvars(0, hdmi_tb);
-    end
+    $display("Simulation finished.");
+    $finish;
+  end
 
 endmodule
