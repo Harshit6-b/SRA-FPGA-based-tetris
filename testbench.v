@@ -2,11 +2,12 @@
 
 module hdmi_tb();
 
-    // Inputs to the top module
-    reg pixclk;
+    // Input clocks and reset
+    reg pixclk;        // 40 MHz pixel clock
+    reg clk_TMDS;      // 400 MHz TMDS serialization clock
     reg reset;
 
-    // Outputs from the top module
+    // HDMI TMDS Outputs
     wire [2:0] TMDSp;
     wire [2:0] TMDSn;
     wire TMDSp_clock;
@@ -15,6 +16,7 @@ module hdmi_tb();
     // Instantiate the top-level HDMI module
     hdmi_top uut (
         .pixclk(pixclk),
+        .clk_TMDS(clk_TMDS),
         .reset(reset),
         .TMDSp(TMDSp),
         .TMDSn(TMDSn),
@@ -22,13 +24,19 @@ module hdmi_tb();
         .TMDSn_clock(TMDSn_clock)
     );
 
-    // Clock generation: 40 MHz clock 
+    // Generate 40 MHz pixel clock (period = 25 ns)
     initial begin
         pixclk = 0;
-        forever #(12.5) pixclk = ~pixclk; // Toggle every 12.5 ns
+        forever #(12.5) pixclk = ~pixclk;
     end
 
-    // Stimulus block
+    // Generate 400 MHz TMDS clock (period = 2.5 ns)
+    initial begin
+        clk_TMDS = 0;
+        forever #(1.25) clk_TMDS = ~clk_TMDS;
+    end
+
+    // Stimulus
     initial begin
         $display("Starting HDMI simulation...");
 
@@ -37,17 +45,23 @@ module hdmi_tb();
         #100;
         reset = 0;
 
-        // Wait and finish (removed vcount-based wait)
-        #100000; // You can adjust the delay as needed
+        // Run simulation for some time
+        #200000; // Adjust as needed to simulate enough lines/frames
 
         $display("Ending simulation at time=%g", $time);
         $finish;
     end
 
-    // Optional: Monitor TMDS outputs (good for debugging)
+    // Optional: Monitor TMDS outputs
     initial begin
-        $monitor("Time=%g | TMDSp=%b | TMDSn=%b | TMDSp_clock=%b | TMDSn_clock=%b", 
-                  $time, TMDSp, TMDSn, TMDSp_clock, TMDSn_clock);
+        $monitor("Time=%g | TMDSp=%b | TMDSn=%b | TMDSp_clk=%b | TMDSn_clk=%b", 
+                 $time, TMDSp, TMDSn, TMDSp_clock, TMDSn_clock);
+    end
+
+    // Optional: Dump waveform (for GTKWave)
+    initial begin
+        $dumpfile("hdmi_tb.vcd");
+        $dumpvars(0, hdmi_tb);
     end
 
 endmodule
