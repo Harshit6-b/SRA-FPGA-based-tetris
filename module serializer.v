@@ -1,90 +1,53 @@
-module serializer(
-input [9:0] TMDS_red,
-input [9:0] TMDS_green,
-input [9:0] TMDS_blue,
-input pixclk, //normal clock
-output [2:0] TMDSp,
-output [2:0] TMDSn,
-output TMDSp_clock,
-output TMDSn_clock
-);
+`timescale 1ns / 1ps
 
+module hdmi_tb();
 
-wire clk_TMDS;       // 10x pixel clock output
-wire clkfb;          // feedback wire for MMCM
-wire clk_mmcm_out;   // unbuffered MMCM output
-wire locked;         // MMCM lock indicator
+    // Inputs to the top module
+    reg pixclk;
+    reg reset;
 
-// Use MMCM to multiply pixel clock by 10
-MMCME2_BASE #(
-	.CLKIN1_PERIOD(25.0),       // 40 MHz input clock → 25 ns period
-    .CLKFBOUT_MULT_F(10.0),     // Multiply by 10
-    .CLKOUT0_DIVIDE_F(1.0),     // No divide: net ×10
-    .CLKOUT0_PHASE(0.0)
-) mmcm_inst (
-    .CLKIN1(pixclk),
-    .CLKFBIN(clkfb),
-    .CLKFBOUT(clkfb),
-    .CLKOUT0(clk_mmcm_out),
-    .LOCKED(locked),
-    .PWRDWN(1'b0),
-    .RST(1'b0)
-);
+    // Outputs from the top module
+    wire [2:0] TMDSp;
+    wire [2:0] TMDSn;
+    wire TMDSp_clock;
+    wire TMDSn_clock;
 
-// Global clock buffer for MMCM output
-BUFG BUFG_TMDS (
-    .I(clk_mmcm_out),
-    .O(clk_TMDS)
-);
-//shifting to send 1 bit at a time
-reg [3:0] TMDS_mod10 = 0;
-reg TMDS_shift_load = 0;
+    // Instantiate the top-level HDMI module
+    hdmi_top uut (
+        .pixclk(pixclk),
+        .reset(reset),
+        .TMDSp(TMDSp),
+        .TMDSn(TMDSn),
+        .TMDSp_clock(TMDSp_clock),
+        .TMDSn_clock(TMDSn_clock)
+    );
 
-always @(posedge clk_TMDS) begin 
-	TMDS_mod10 <= (TMDS_mod10 == 9) ? 0: TMDS_mod10+1;
-	TMDS_shift_load <= (TMDS_mod10 == 9);
-end
+    // Clock generation: 40 MHz clock 
+    initial begin
+        pixclk = 0;
+        forever #(12.5) pixclk = ~pixclk; // Toggle every 12.5 ns
+    end
 
-reg [9:0] TMDS_shift_red = 10'b0;
-reg [9:0] TMDS_shift_green = 10'b0;
-reg [9:0] TMDS_shift_blue = 10'b0;
+    // Stimulus block
+    initial begin
+        $display("Starting HDMI simulation...");
 
-always @(posedge clk_TMDS) begin 
-	if (TMDS_shift_load) begin 
-		TMDS_shift_red <= TMDS_red;
-		TMDS_shift_green <= TMDS_green;
-		TMDS_shift_blue <= TMDS_blue;
-	end
-	else begin
-		TMDS_shift_red <= {1'b0, TMDS_shift_red[9:1]};
-		TMDS_shift_green <= {1'b0, TMDS_shift_green[9:1]};
-		TMDS_shift_blue <= {1'b0, TMDS_shift_blue[9:1]};
-	end
-end
+        // Initialize reset
+        reset = 1;
+        #100;
+        reset = 0;
 
-//positive and negative output k liye 
-OBUFDS OBUFDS_red (
-	.I(TMDS_shift_red[0]),
-	.O(TMDSp[2]),
-	.OB(TMDSn[2])
-	);
-	
-OBUFDS OBUFDS_green (
-	.I(TMDS_shift_green[0]),
-	.O(TMDSp[1]),
-	.OB(TMDSn[1])
-	);
-	
-OBUFDS OBUFDS_blue (
-	.I(TMDS_shift_blue[0]),
-	.O(TMDSp[0]),
-	.OB(TMDSn[0])
-	);
-	
-OBUFDS OBUFDS_clock (
-	.I(pixclk),
-	.O(TMDSp_clock),
-	.OB(TMDSn_clock)
-	);
+        // Wait and finish (removed vcount-based wait)
+        #100000; // You can adjust the delay as needed
+
+        $display("Ending simulation at time=%g", $time);
+        $finish;
+    end
+
+    // Optional: Monitor TMDS outputs (good for debugging)
+    initial begin
+        $monitor("Time=%g | TMDSp=%b | TMDSn=%b | TMDSp_clock=%b | TMDSn_clock=%b", 
+                  $time, TMDSp, TMDSn, TMDSp_clock, TMDSn_clock);
+    end
 
 endmodule
