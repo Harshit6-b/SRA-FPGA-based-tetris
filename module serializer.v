@@ -1,84 +1,46 @@
 module serializer(
-input [9:0] TMDS_red,
-input [9:0] TMDS_green,
-input [9:0] TMDS_blue,
-input pixclk, //normal clock
-output [2:0] TMDSp,
-output [2:0] TMDSn,
-output TMDSp_clock,
-output TMDSn_clock
+  input  [9:0] TMDS_red,
+  input  [9:0] TMDS_green,
+  input  [9:0] TMDS_blue,
+  input        pixclk,       // 40 MHz pixel clock
+  input        clk_TMDS,     // 400 MHz clock input (10x pixel clock) from outside
+  output       TMDSp_clock,
+  output       TMDSn_clock,
+  output [2:0] TMDSp,
+  output [2:0] TMDSn
 );
 
-//generating 10x faster clock
-wire clk_TMDS;
-wire DCM_TMDS_CLKFX;
-
-DCM_SP #(
-.CLKFX_MULTIPLY(10),
-.CLKFX_DIVIDE(1)
-     ) DCM_TMDS_inst (
-.CLKIN(pixclk),
-.CLKFX(DCM_TMDS_CLKFX),
-.RST(1'b0),
-.CLKFB(1'b0),
-.CLK0(),
-.LOCKED()
-);
-
-BUFG BUFG_TMDS (
-.I(DCM_TMDS_CLKFX),
-.O(clk_TMDS)
-);
-
-//shifting to send 1 bit at a time
+// Shift counters
 reg [3:0] TMDS_mod10 = 0;
 reg TMDS_shift_load = 0;
 
 always @(posedge clk_TMDS) begin 
-TMDS_mod10 <= (TMDS_mod10 == 9) ? 0: TMDS_mod10+1;
-TMDS_shift_load <= (TMDS_mod10 == 9);
+  TMDS_mod10 <= (TMDS_mod10 == 9) ? 0 : TMDS_mod10 + 1;
+  TMDS_shift_load <= (TMDS_mod10 == 9);
 end
 
-reg [9:0] TMDS_shift_red = 10'b0;
+// Shift registers
+reg [9:0] TMDS_shift_red   = 10'b0;
 reg [9:0] TMDS_shift_green = 10'b0;
-reg [9:0] TMDS_shift_blue = 10'b0;
+reg [9:0] TMDS_shift_blue  = 10'b0;
 
 always @(posedge clk_TMDS) begin 
-if (TMDS_shift_load) begin 
-TMDS_shift_red <= TMDS_red;
-TMDS_shift_green <= TMDS_green;
-TMDS_shift_blue <= TMDS_blue;
+  if (TMDS_shift_load) begin 
+    TMDS_shift_red   <= TMDS_red;
+    TMDS_shift_green <= TMDS_green;
+    TMDS_shift_blue  <= TMDS_blue;
+  end else begin
+    TMDS_shift_red   <= {1'b0, TMDS_shift_red[9:1]};
+    TMDS_shift_green <= {1'b0, TMDS_shift_green[9:1]};
+    TMDS_shift_blue  <= {1'b0, TMDS_shift_blue[9:1]};
+  end
 end
-else begin
-TMDS_shift_red <= {1'b0, TMDS_shift_red[9:1]};
-TMDS_shift_green <= {1'b0, TMDS_shift_green[9:1]};
-TMDS_shift_blue <= {1'b0, TMDS_shift_blue[9:1]};
-end
-end
 
-//positive and negative output k liye 
-OBUFDS OBUFDS_red (
-.I(TMDS_shift_red[0]),
-.O(TMDSp[2]),
-.OB(TMDSn[2])
-);
+// Assign outputs (non-differential)
+assign TMDSp = {TMDS_shift_red[0], TMDS_shift_green[0], TMDS_shift_blue[0]};
+assign TMDSn = ~TMDSp; // simple differential emulation
 
-OBUFDS OBUFDS_green (
-.I(TMDS_shift_green[0]),
-.O(TMDSp[1]),
-.OB(TMDSn[1])
-);
-
-OBUFDS OBUFDS_blue (
-.I(TMDS_shift_blue[0]),
-.O(TMDSp[0]),
-.OB(TMDSn[0])
-);
-
-OBUFDS OBUFDS_clock (
-.I(pixclk),
-.O(TMDSp_clock),
-.OB(TMDSn_clock)
-);
+assign TMDSp_clock = pixclk;
+assign TMDSn_clock = ~pixclk;
 
 endmodule
