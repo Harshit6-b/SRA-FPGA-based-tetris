@@ -17,7 +17,7 @@ wire locked;         // MMCM lock indicator
 
 // Use MMCM to multiply pixel clock by 10
 MMCME2_BASE #(
-    .CLKIN1_PERIOD(10.0),       // 100 MHz input clock → 10 ns period
+	.CLKIN1_PERIOD(25.0),       // 40 MHz input clock → 10 ns period
     .CLKFBOUT_MULT_F(10.0),     // Multiply by 10
     .CLKOUT0_DIVIDE_F(1.0),     // No divide: net ×10
     .CLKOUT0_PHASE(0.0)
