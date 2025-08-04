@@ -1,6 +1,5 @@
 module hdmi_loader(
 input pixclk,
-input reset,
 output reg VDE,
 output reg [1:0]CD
 );
@@ -24,18 +23,6 @@ reg [4:0] temp ;
   end 
 // Main logic block to handle pixel counting and synchronization signals
   always @(posedge pixclk) begin
-  	if (reset) begin
-  		// reset all reg
-  		hcount <= 0;  
-	      vcount <= 0;  
-	      hsync <= 1;  
-	      vsync <= 1; 
-	      frame_switch <= 0;  
-	      temp <= 0; 
-	      VDE <= 0;
-	      CD <=  2'b11;
-	end
-	else
 	      hcount <= hcount + 1;  // Increment pixel counter on each new clock cycle
 
 	      // Manage horizontal synchronization signal based on pixel count
