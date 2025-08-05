@@ -8,7 +8,7 @@ module hdmi_top(
     clk_div_10x X (
         .clk_in(clk_fast),
         .clk_out(pixclk)
-    )
+    );
     wire VDE;
     wire [1:0] CD;
 
@@ -19,6 +19,11 @@ module hdmi_top(
     assign B_data = (VDE) ? 8'h00 : 8'h00;
 
     wire [9:0] TMDS_red, TMDS_green, TMDS_blue;
+
+     clk_div_10x X (
+        .clk_in(clk_fast),
+        .clk_out(pixclk)
+    );
 
     hdmi_loader timing_gen (
         .pixclk(pixclk),     // now passing divided pixclk (pixel clock)
