@@ -17,8 +17,8 @@ module hdmi_top_tb;
     .TMDSn_clock(TMDSn_clock)
   );
 
-  // Generate 400 MHz fast clock (period 2.5 ns)
-  always #12.5 pixclk = ~pixclk;
+  // Generate 100 MHz fast clock 
+  always #5 clk_fast = ~clk_fast;
 
   initial begin
     $display("Starting HDMI simulation...");
