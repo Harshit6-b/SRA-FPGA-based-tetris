@@ -11,9 +11,9 @@ module hdmi_top(
 
     wire [7:0] R_data, G_data, B_data;
 
-    assign R_data = (VDE) ? 8'hFF : 8'h00;
-    assign G_data = (VDE) ? 8'h00 : 8'h00;
-    assign B_data = (VDE) ? 8'h00 : 8'h00;
+    assign R_data = (VDE) ? 8'h11 : 8'h00;
+    assign G_data = (VDE) ? 8'h11 : 8'h00;
+    assign B_data = (VDE) ? 8'h11 : 8'h00;
 
     wire [9:0] TMDS_red, TMDS_green, TMDS_blue;
 
