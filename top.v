@@ -1,13 +1,10 @@
 module hdmi_top(
-    input pixclk,        // 10x pixel clock (e.g. 400 MHz)
+    input  clk_fast,        // 10x pixel clock (e.g. 400 MHz)
     output [2:0] TMDSp,
     output [2:0] TMDSn,
     output TMDSp_clock,
     output TMDSn_clock
 );
-
-   
-
     wire VDE;
     wire [1:0] CD;
 
@@ -53,7 +50,8 @@ module hdmi_top(
         .TMDS_red(TMDS_red),
         .TMDS_green(TMDS_green),
         .TMDS_blue(TMDS_blue),
-        .pixclk(pixclk),   // pass the original fast clock here!
+        .pixclk(pixclk),
+        .clk_fast(clk_fast)     // pass the original fast clock here!
         .TMDSp_clock(TMDSp_clock),
         .TMDSn_clock(TMDSn_clock),
         .TMDSp(TMDSp),
