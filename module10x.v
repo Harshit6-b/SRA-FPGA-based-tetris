@@ -1,9 +1,9 @@
     module clk_div_10x (
     input wire clk_in,       // Input clock
-    output reg clk_out = 0   // Output clock (10x slower)
+    output reg clk_out = 0   // Output clock 
 );
 
-    reg [3:0] count = 0;     // 4-bit counter (0 to 9)
+        reg [3:0] count = 0;     // 4-bit counter 0 to 9
 
     always @(posedge clk_in) begin
         if (count == 4) begin
