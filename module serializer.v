@@ -12,7 +12,7 @@ module serializer(
   reg [4:0] count = 0;
 reg clk_fast = 0;
   always @(posedge pixclk) begin
-    for(count=0;count<4'd20;count=count=count+1) begin
+    for(count=0;count<4'd20;count=count+1) begin
       clk_fast=~clk_fast;
     end
   end
