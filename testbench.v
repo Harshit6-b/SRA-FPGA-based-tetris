@@ -2,7 +2,7 @@
 
 module hdmi_top_tb;
 
-  reg pixclk = 0;        // 400 MHz clock (10x pixel clock)
+  reg clk_fast = 0;        // 400 MHz clock (10x pixel clock)
   wire [2:0] TMDSp;
   wire [2:0] TMDSn;
   wire TMDSp_clock;
