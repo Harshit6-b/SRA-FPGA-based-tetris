@@ -5,6 +5,10 @@ module hdmi_top(
     output TMDSp_clock,
     output TMDSn_clock
 );
+    clk_div_10x X (
+        .clk_fast()
+        .pixclk()
+    )
     wire VDE;
     wire [1:0] CD;
 
