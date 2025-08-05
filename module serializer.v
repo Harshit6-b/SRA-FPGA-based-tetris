@@ -2,23 +2,20 @@ module serializer(
   input  [9:0] TMDS_red,
   input  [9:0] TMDS_green,
   input  [9:0] TMDS_blue,      
-  input        clk_fast,     
+  input        pixclk,     
   output       TMDSp_clock,
   output       TMDSn_clock,
   output [2:0] TMDSp,
   output [2:0] TMDSn
 );
 
-reg [3:0] count = 0;
-reg pixclk = 0;
-
-always @(posedge clk_fast) begin
-    if(count == 9) begin
-        count <= 0;
-        pixclk <= ~pixclk;  // divide by 10
-    end else
-        count <= count + 1;
-end
+  reg [4:0] count = 0;
+reg clk_fast = 0;
+  always @(posedge pixclk) begin
+    for(count=0;count<4'd20;count=count=count+1) begin
+      clk_fast=~clk_fast;
+    end
+  end
 
   
 // Shift counters
