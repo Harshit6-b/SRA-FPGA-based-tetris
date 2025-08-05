@@ -10,7 +10,7 @@ module hdmi_top_tb;
 
   // Instantiate the design under test
   hdmi_top uut (
-    .pixclk(pixclk),       // 400 MHz
+    .clk_fast(clk_fast),       // 400 MHz
     .TMDSp(TMDSp),
     .TMDSn(TMDSn),
     .TMDSp_clock(TMDSp_clock),
