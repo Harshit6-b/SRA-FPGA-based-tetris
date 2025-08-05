@@ -57,7 +57,7 @@ module hdmi_top(
         .TMDS_green(TMDS_green),
         .TMDS_blue(TMDS_blue),
         .pixclk(pixclk),
-        .clk_fast(clk_fast)     // pass the original fast clock here!
+        .clk_fast(clk_fast),    // pass the original fast clock here!
         .TMDSp_clock(TMDSp_clock),
         .TMDSn_clock(TMDSn_clock),
         .TMDSp(TMDSp),
