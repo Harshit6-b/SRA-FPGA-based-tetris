@@ -1,5 +1,8 @@
 module hdmi_top(
     input  clk_fast,        // 10x pixel clock (e.g. 400 MHz)
+    input [7:0] R_data.
+    input [7:0] B_data,
+    input [7:0] G_data,
     output [2:0] TMDSp,
     output [2:0] TMDSn,
     output TMDSp_clock,
@@ -8,13 +11,7 @@ module hdmi_top(
     
     wire VDE;
     wire [1:0] CD;
-
-    wire [7:0] R_data, G_data, B_data;
-
-    assign R_data = (VDE) ? 8'h11 : 8'h00;
-    assign G_data = (VDE) ? 8'h11 : 8'h00;
-    assign B_data = (VDE) ? 8'h11 : 8'h00;
-
+   
     wire [9:0] TMDS_red, TMDS_green, TMDS_blue;
 
      clk_div_10x X (
