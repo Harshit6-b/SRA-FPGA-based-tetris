@@ -33,8 +33,8 @@ hdmi_top uut (
 always @(*) begin
   if (VDE) begin
     R_data = 8'h11;
-    G_data = 8'h11;
-    B_data = 8'h11;
+    G_data = 8'h00;
+    B_data = 8'00;
   end else begin
     R_data = 8'h00;
     G_data = 8'h00;
