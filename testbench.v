@@ -16,7 +16,32 @@ module hdmi_top_tb;
     .TMDSp_clock(TMDSp_clock),
     .TMDSn_clock(TMDSn_clock)
   );
+//=============================================================================================
+  reg [7:0] R_data, G_data, B_data;
+wire VDE;
 
+// Instantiate DUT, connect R_data/G_data/B_data as inputs and VDE as output
+hdmi_top uut (
+  .pixclk(pixclk),
+  .R_data(R_data),
+  .G_data(G_data),
+  .B_data(B_data),
+  .VDE(VDE),
+  // other ports...
+);
+  
+always @(*) begin
+  if (VDE) begin
+    R_data = 8'h11;
+    G_data = 8'h11;
+    B_data = 8'h11;
+  end else begin
+    R_data = 8'h00;
+    G_data = 8'h00;
+    B_data = 8'h00;
+  end
+end
+//===============================================================================================  
   // Generate 100 MHz fast clock 
   always #5 clk_fast = ~clk_fast;
 
