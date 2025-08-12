@@ -16,8 +16,8 @@ always @(posedge clk) begin
    	4'b0010:state<=state>>4;
 endcase
  bled = state[11:8];   
-    rled = state[7:4];
-    gled = state[3:0];
+    gled = state[7:4];
+    rled = state[3:0];
 end
 
 endmodule
