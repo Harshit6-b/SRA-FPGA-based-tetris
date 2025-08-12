@@ -65,7 +65,6 @@ always @(posedge clk) begin
         	end
         end
     end
-    end
     else if (button == 4'b0100) begin
        if((~(rled==4'b0000))&&(gled==4'b0000)&&(bled==4'b0000)) begin
        		gled<=rled;
