@@ -30,7 +30,7 @@ module uart_tb;
         $monitor("Time: %0t | button: %b | rled: %b | gled: %b | bled: %b", $time, button, rled, gled, bled);
 
         // Test case 1: Press button 1 (Shift left)
-        #10 button = 4'b0001;
+        #10 button = 4'b0100;
         #10 button = 4'b0000; // Reset button to 0000
 
         // Test case 2: Press button 8 (Shift right)
