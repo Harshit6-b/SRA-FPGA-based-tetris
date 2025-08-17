@@ -7,7 +7,7 @@ module hdmi_top_tb;
   wire [2:0] TMDSn;
   wire TMDSp_clock;
   wire TMDSn_clock;
-  wire clk_v
+  wire clk_v;
   // Instantiate the design under test
   hdmi_top uut (
     .clk_b(clk_b),       // 100 MHz
@@ -15,7 +15,7 @@ module hdmi_top_tb;
     .TMDSn(TMDSn),
     .TMDSp_clock(TMDSp_clock),
     .TMDSn_clock(TMDSn_clock),
-    .clk_v
+    .clk_v(clk_v)
   );
  
   // Generate 100 MHz fast clock 
