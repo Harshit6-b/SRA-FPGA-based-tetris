@@ -2,48 +2,24 @@
 
 module hdmi_top_tb;
 
-  reg clk_fast = 0;        // 100 MHz clock 
+  reg clk_b = 0;        // 100 MHz clock 
   wire [2:0] TMDSp;
   wire [2:0] TMDSn;
   wire TMDSp_clock;
   wire TMDSn_clock;
-
+  wire clk_v
   // Instantiate the design under test
   hdmi_top uut (
-    .clk_fast(clk_fast),       // 100 MHz
+    .clk_b(clk_b),       // 100 MHz
     .TMDSp(TMDSp),
     .TMDSn(TMDSn),
     .TMDSp_clock(TMDSp_clock),
-    .TMDSn_clock(TMDSn_clock)
+    .TMDSn_clock(TMDSn_clock),
+    .clk_v
   );
-//=============================================================================================
-  reg [7:0] R_data, G_data, B_data;
-wire VDE;
-
-// Instantiate DUT, connect R_data/G_data/B_data as inputs and VDE as output
-hdmi_top uut (
-  .pixclk(pixclk),
-  .R_data(R_data),
-  .G_data(G_data),
-  .B_data(B_data),
-  .VDE(VDE),
-  // other ports...
-);
-  
-always @(*) begin
-  if (VDE) begin
-    R_data = 8'h11;
-    G_data = 8'h00;
-    B_data = 8'00;
-  end else begin
-    R_data = 8'h00;
-    G_data = 8'h00;
-    B_data = 8'h00;
-  end
-end
-//===============================================================================================  
+ 
   // Generate 100 MHz fast clock 
-  always #5 clk_fast = ~clk_fast;
+  always #5 clk_b = ~clk_b;
 
   initial begin
     $display("Starting HDMI simulation...");
