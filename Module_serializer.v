@@ -10,8 +10,6 @@ module serializer(
   output [2:0] TMDSn
 );
 
-
-
   
 // Shift counters
 reg [3:0] TMDS_mod10 = 0;
@@ -39,12 +37,35 @@ reg [9:0] TMDS_shift_blue  = 10'b0;
   end
 end
 
+OBUFDS #(
+    .IOSTANDARD("TMDS_33")
+    ) obufds_clk(
+         .I(pixclk),
+         .O(TMDSp_clock),
+         .OB(TMDSn_clock)
+    );
+    
+OBUFDS #(
+    .IOSTANDARD("TMDS_33")
+    ) obufds_red(
+         .I(TMDS_shift_red[0]),
+         .O(TMDSp[2]),
+         .OB(TMDSn[2])
+    );
 
-// Assign outputs (non-differential)
-assign TMDSp = {TMDS_shift_red[0], TMDS_shift_green[0], TMDS_shift_blue[0]};
-assign TMDSn = ~TMDSp; // simple differential emulation
-
-assign TMDSp_clock = pixclk;
-assign TMDSn_clock = ~pixclk;
-
+OBUFDS #(
+    .IOSTANDARD("TMDS_33")
+    ) obufds_green(
+         .I(TMDS_shift_green[0]),
+         .O(TMDSp[1]),
+         .OB(TMDSn[1])
+    );
+    
+OBUFDS #(
+    .IOSTANDARD("TMDS_33")
+    ) obufds_blue(
+         .I(TMDS_shift_blue[0]),
+         .O(TMDSp[0]),
+         .OB(TMDSn[0])
+    );
 endmodule
