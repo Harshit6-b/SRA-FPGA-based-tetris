@@ -1,7 +1,7 @@
 module hdmi_loader (
     input wire pixclk,      
     output reg VDE,          // Video Data Enable (active video)
-    output reg [1:0] CD      // {vsync, hsync}
+    output reg [1:0] CD      // {hsync, vsync}
 );
 
     // Horizontal and vertical counters
@@ -50,7 +50,7 @@ module hdmi_loader (
         VDE <= (hcount < 640) && (vcount < 480);
 
         // Combine syncs into CD
-        CD <= {vsync, hsync};
+        CD <= {hsync, vsync};
     end
 
 endmodule
