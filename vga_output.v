@@ -2,8 +2,6 @@
 
 module binary_loader(
     input  clk,         // 25 MHz pixel clock for VGA timing
-    input  clk_fast,    // Faster clock for BRAM reading
-
     output reg h_sync_in,  // Horizontal sync for VGA
     output reg v_sync_in,  // Vertical sync for VGA
     output reg out         // Pixel output (1=white,0=black)
