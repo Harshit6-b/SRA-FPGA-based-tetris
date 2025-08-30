@@ -263,6 +263,22 @@ module binary_loader(
 		block_index <= 9'd511; // invalid
 	end
 
+	  integer block_col, block_row, block_index;
 
-
+    always @(posedge clk) begin
+        // active screen area
+        if (h_count < H_ACTIVE && v_count < V_ACTIVE) begin
+            // inside game board region?
+            if ((h_count >= START_X) && (h_count < START_X+BOARD_WIDTH) &&
+                (v_count >= START_Y) && (v_count < START_Y+BOARD_HEIGHT)) begin
+                block_col  = (h_count - START_X) / BLOCK_SIZE; // 0-9
+                block_row  = (v_count - START_Y) / BLOCK_SIZE; // 0-19
+                block_index = block_row*10 + block_col;
+                out <= board[block_index];
+            end else
+                out <= 0;
+        end else begin
+            out <= 0;
+        end
+    end
 endmodule
