@@ -262,9 +262,6 @@ module binary_loader(
 	    else
 		block_index <= 9'd511; // invalid
 	end
-
-	  integer block_col, block_row, block_index;
-
     always @(posedge clk) begin
         // active screen area
         if (h_count < H_ACTIVE && v_count < V_ACTIVE) begin
