@@ -4,9 +4,9 @@ module simple_tetris(
     input reset,
     input [3:0] cmd, // 4'b1000=left, 4'b0001=right, 4'b0100=rotate, 4'b0010=down
     output reg [199:0] board, // 20 rows x 10 columns (200 bits total)
-    output reg game_over,// BRAM Interface Signals
-    output reg [7:0] bram_addr,
-    output reg [31:0] bram_din,
+    output reg game_over,
+    output reg [4:0] bram_addr,  
+    output reg [15:0] bram_din,  
     output reg bram_wea
 );
 
@@ -257,97 +257,103 @@ module simple_tetris(
             end
         end
     end
-	    // BRAM signals
-	wire [7:0] bram_addr;      // 8-bit address (for 256-depth BRAM)
-	wire [31:0] bram_din;      // 32-bit data input
-	wire [0:0] bram_wea;       // 1-bit write enable
-	wire [31:0] bram_dout;     // 32-bit data output (not used here)
+	// BRAM Write State Machine
+reg [2:0] bram_write_state;
+reg bram_write_ready;
 
-	// Instantiate BRAM
-	blk_mem_gen_0 bram_inst (
-	  .clka(clk),      // Clock
-	  .wea(bram_wea),  // Write enable
-	  .addra(bram_addr), // Address
-	  .dina(bram_din),    // Data input
-	  .douta(bram_dout)   // Data output (optional for reading)
-	);
-
-    // BRAM Write State Machine
-    reg [2:0] bram_write_state;
-    reg bram_write_ready;
-
-    // BRAM Write Logic
-    always @(posedge clk) begin
-        if (reset) begin
-            // Reset BRAM write signals
-            bram_addr <= 0;
-            bram_din <= 0;
-            bram_wea <= 0;
+// BRAM Write Logic
+always @(posedge clk) begin
+    if (reset) begin
+        // Reset BRAM write signals
+        bram_addr <= 0;
+        bram_din <= 0;
+        bram_wea <= 0;
+        bram_write_state <= 0;
+        bram_write_ready <= 0;
+    end else begin
+        // Trigger BRAM write after line clear
+        if (state == 2'b11 && !bram_write_ready) begin
+            bram_write_ready <= 1;
             bram_write_state <= 0;
-            bram_write_ready <= 0;
-        end else begin
-            // Trigger BRAM write after line clear
-            if (state == 2'b11 && !bram_write_ready) begin
-                bram_write_ready <= 1;
-                bram_write_state <= 0;
-            end
+        end
 
-            // BRAM Write Sequence
-            if (bram_write_ready) begin
-                bram_wea <= 1; // Enable write
+        // BRAM Write Sequence - Updated for 16-bit writes
+        if (bram_write_ready) begin
+            bram_wea <= 1; // Enable write
 
-                case (bram_write_state)
-                    3'd0: begin // First 32 bits (199:168)
-                        bram_addr <= 8'h00;
-                        bram_din <= board[199:168];
-                        bram_write_state <= bram_write_state + 1;
-                    end
-
-                    3'd1: begin // Next 32 bits (167:136)
-                        bram_addr <= 8'h01;
-                        bram_din <= board[167:136];
-                        bram_write_state <= bram_write_state + 1;
-                    end
-
-                    3'd2: begin // Next 32 bits (135:104)
-                        bram_addr <= 8'h02;
-                        bram_din <= board[135:104];
-                        bram_write_state <= bram_write_state + 1;
-                    end
-
-                    3'd3: begin // Next 32 bits (103:72)
-                        bram_addr <= 8'h03;
-                        bram_din <= board[103:72];
-                        bram_write_state <= bram_write_state + 1;
-                    end
-
-                    3'd4: begin // Next 32 bits (71:40)
-                        bram_addr <= 8'h04;
-                        bram_din <= board[71:40];
-                        bram_write_state <= bram_write_state + 1;
-                    end
-
-                    3'd5: begin // Next 32 bits (39:8)
-                        bram_addr <= 8'h05;
-                        bram_din <= board[39:8];
-                        bram_write_state <= bram_write_state + 1;
-                    end
-
-                    3'd6: begin // Last 8 bits + padding (7:0)
-                        bram_addr <= 8'h06;
-                        bram_din <= {24'b0, board[7:0]};
-                        bram_write_state <= bram_write_state + 1;
-                    end
-
-                    3'd7: begin // Finish write sequence
-                        bram_wea <= 0;
-                        bram_write_ready <= 0;
-                        bram_write_state <= 0;
-                    end
-                endcase
-            end
+            case (bram_write_state)
+                0: begin // First 16 bits (199:184)
+                    bram_addr <= 5'd0;
+                    bram_din <= board[199:184];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                1: begin // Next 16 bits (183:168)
+                    bram_addr <= 5'd1;
+                    bram_din <= board[183:168];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                2: begin // Next 16 bits (167:152)
+                    bram_addr <= 5'd2;
+                    bram_din <= board[167:152];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                3: begin // Next 16 bits (151:136)
+                    bram_addr <= 5'd3;
+                    bram_din <= board[151:136];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                4: begin // Next 16 bits (135:120)
+                    bram_addr <= 5'd4;
+                    bram_din <= board[135:120];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                5: begin // Next 16 bits (119:104)
+                    bram_addr <= 5'd5;
+                    bram_din <= board[119:104];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                6: begin // Next 16 bits (103:88)
+                    bram_addr <= 5'd6;
+                    bram_din <= board[103:88];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                7: begin // Next 16 bits (87:72)
+                    bram_addr <= 5'd7;
+                    bram_din <= board[87:72];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                8: begin // Next 16 bits (71:56)
+                    bram_addr <= 5'd8;
+                    bram_din <= board[71:56];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                9: begin // Next 16 bits (55:40)
+                    bram_addr <= 5'd9;
+                    bram_din <= board[55:40];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                10: begin // Next 16 bits (39:24)
+                    bram_addr <= 5'd10;
+                    bram_din <= board[39:24];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                11: begin // Next 16 bits (23:8)
+                    bram_addr <= 5'd11;
+                    bram_din <= board[23:8];
+                    bram_write_state <= bram_write_state + 1;
+                end
+                12: begin // Last 8 bits + padding (7:0)
+                    bram_addr <= 5'd12;
+                    bram_din <= {8'b0, board[7:0]}; // Pad with zeros to make 16 bits
+                    bram_write_state <= bram_write_state + 1;
+                end
+                13: begin // Finish write sequence
+                    bram_wea <= 0;
+                    bram_write_ready <= 0;
+                    bram_write_state <= 0;
+                end
+            endcase
         end
     end
-
-
+endmodule
 endmodule
