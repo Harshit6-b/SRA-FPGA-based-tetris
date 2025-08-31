@@ -50,24 +50,28 @@ module binary_loader(
                        (v_count <  V_ACTIVE+V_FRONT_PORCH+V_SYNC_WIDTH));
     end
 
-   	    // 2) BRAM reading using the same clk (no clk_fast)
-    reg  [7:0]  bram_addr = 0;
-    reg         bram_wea  = 0;     // read-only
-    reg  [31:0] bram_din  = 0;
-    wire [31:0] bram_dout;
+   	   // 2) BRAM reading 
+    reg  [4:0]  bram_addr = 0;     // 5-bit address (0-31)
+    wire        bram_wea  = 0;     // read-only
+    wire [15:0] bram_din  = 0;     // 16-bit data (not used for reading)
+    wire [15:0] bram_dout;          // 16-bit data output
 
     // local storage of board
     reg [199:0] board = 0;
 
     blk_mem_gen_0 bram_inst (
-        .clka(clk),       // << use pixel clock now
+        .clka(clk),
+        .ena(1'b1),              // Enable port A
         .wea(bram_wea),
         .addra(bram_addr),
         .dina(bram_din),
-        .douta(bram_dout)
+        .clkb(clk),              // Port B clock
+        .enb(1'b1),              // Enable port B  
+        .addrb(5'b0),            // Port B address (not used)
+        .doutb(bram_dout)        // Port B data output
     );
 
-    // FSM for sequential reads
+    // FSM for sequential reads - CORRECTED FOR 16-BIT READS
     reg [3:0] rd_state   = 0;
     reg       rd_active  = 0;
 
@@ -79,36 +83,32 @@ module binary_loader(
         end
 
         if (rd_active) begin
-            // set next BRAM address
+            // set BRAM address
+            bram_addr <= rd_state[3:0];
+
+            // latch previous cycle's data (16 bits at a time)
             case (rd_state)
-                0: bram_addr <= 0;
-                1: bram_addr <= 1;
-                2: bram_addr <= 2;
-                3: bram_addr <= 3;
-                4: bram_addr <= 4;
-                5: bram_addr <= 5;
-                6: bram_addr <= 6;
+                1:  board[199:184] <= bram_dout;      // addr 0 data
+                2:  board[183:168] <= bram_dout;      // addr 1
+                3:  board[167:152] <= bram_dout;      // addr 2
+                4:  board[151:136] <= bram_dout;      // addr 3
+                5:  board[135:120] <= bram_dout;      // addr 4
+                6:  board[119:104] <= bram_dout;      // addr 5
+                7:  board[103:88]  <= bram_dout;      // addr 6
+                8:  board[87:72]   <= bram_dout;      // addr 7
+                9:  board[71:56]   <= bram_dout;      // addr 8
+                10: board[55:40]   <= bram_dout;      // addr 9
+                11: board[39:24]   <= bram_dout;      // addr 10
+                12: board[23:8]    <= bram_dout;      // addr 11
+                13: board[7:0]     <= bram_dout[7:0]; // addr 12 (only 8 bits)
             endcase
 
-            // latch previous cycle’s data
-            case (rd_state)
-                1: board[199:168] <= bram_dout;      // addr 0 data
-                2: board[167:136] <= bram_dout;      // addr 1
-                3: board[135:104] <= bram_dout;      // addr 2
-                4: board[103:72]  <= bram_dout;      // addr 3
-                5: board[71:40]   <= bram_dout;      // addr 4
-                6: board[39:8]    <= bram_dout;      // addr 5
-                7: board[7:0]     <= bram_dout[7:0]; // addr 6
-            endcase
-
-            if (rd_state == 7)
+            if (rd_state == 13)
                 rd_active <= 0;
             else
                 rd_state <= rd_state + 1;
         end
-    end
-
-   	
+	end
    	
 	localparam BLOCK_SIZE   = 24;
 	localparam BOARD_WIDTH  = 10*BLOCK_SIZE;  // 240
