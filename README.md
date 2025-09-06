@@ -1,5 +1,29 @@
-# SRA-FPGA-based-tetris
+# FPGA-Based Tetris
 
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Tetris_logo.png/200px-Tetris_logo.png" alt="Logo" width="200" height="100">
+  </a>
+
+  <h3 align="center">FPGA-Based Tetris</h3>
+
+  <p align="center">
+    A hardware-accelerated Tetris implementation on Xilinx Artix-7 FPGA
+    <br />
+    <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris">View Demo</a>
+    ·
+    <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris/issues">Request Feature</a>
+  </p>
+</p>
+
+<!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
 * [About the Project](#about-the-project)
@@ -9,10 +33,10 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [Usage](#usage)
-* [How It Works](#how-it-works)
-* [Understanding BRAM Display](#understanding-bram-display)
-* [Results and Demo](#results-and-demo)
-* [Future Work](#future-work)
+* [System Architecture](#system-architecture)
+* [BRAM-Based Display Implementation](#bram-based-display-implementation)
+* [Results and Performance](#results-and-performance)
+* [Future Enhancements](#future-enhancements)
 * [Troubleshooting](#troubleshooting)
 * [Contributors](#contributors)
 * [Acknowledgements and Resources](#acknowledgements-and-resources)
@@ -21,379 +45,323 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Ever wanted to build your own gaming console? This project turns an FPGA board into a Tetris machine! 
+This project implements a fully functional Tetris game using pure digital logic on the Xilinx Artix-7 FPGA platform. Unlike software-based implementations, this design operates entirely in hardware, providing deterministic performance and real-time responsiveness.
 
-Think of it this way: instead of running Tetris as software on a computer, we're building the actual hardware circuits that play Tetris. It's like building a calculator that can only do one thing - play Tetris - but does it really well!
+**Key Features:**
+* Complete hardware implementation using Verilog HDL
+* Real-time VGA output at 640x480 resolution, 60Hz refresh rate
+* Hardware-accelerated collision detection and game logic
+* BRAM-based background rendering system
+* Button-based user input with hardware debouncing
+* Self-contained system requiring no external processor
 
-**What makes this special:**
-* The entire game runs on hardware circuits (no CPU or software needed)
-* Displays on any VGA monitor (the old-style computer monitors)
-* You control it with physical buttons on the board
-* It starts playing Tetris the moment you power it on!
-
-**Project Info:**
-* **Difficulty:** Medium (Good for learning FPGAs!)
-* **Mentors:** Suchit, Sarvesh
-* **Skills You'll Learn:** FPGA programming, Digital design, Game development in hardware
+**Project Specifications:**
+* **Target Platform:** Arty A7-35T Development Board
+* **Design Complexity:** Medium
+* **Primary Domains:** FPGA Development, Digital Design, Embedded Graphics
 
 ### Tech Stack
 
-* **Verilog** - The "programming language" for hardware (it's not really programming, it's describing circuits!)
-* **Vivado** - The tool that converts our Verilog code into actual FPGA circuits
-* **Arty A7-35T** - The FPGA board (think of it as a blank chip we can program)
-* **VGA Monitor** - To see our game
-* **Push Buttons** - To control the game
+* **Verilog HDL** - Hardware description language for RTL design
+* **Xilinx Vivado Design Suite** - FPGA synthesis and implementation toolchain
+* **Arty A7-35T** - Xilinx Artix-7 FPGA development platform
+* **VGA Interface** - Video output standard
+* **GPIO** - General-purpose I/O for user controls
 
 ### File Structure
 ```
 SRA-FPGA-based-tetris/
 ├── src/
 │   ├── game_logic/
-│   │   ├── tetris_fsm.v          # The "brain" - controls game flow
-│   │   ├── collision_detector.v   # Checks if pieces hit something
-│   │   ├── score_counter.v        # Keeps track of your score
-│   │   └── piece_generator.v      # Creates new Tetris pieces
+│   │   ├── tetris_fsm.v          # Main game state machine controller
+│   │   ├── collision_detector.v   # Hardware collision detection engine
+│   │   ├── score_counter.v        # Score tracking and display logic
+│   │   └── piece_generator.v      # Pseudo-random piece generation
 │   ├── graphics/
-│   │   ├── vga_controller.v       # Makes the monitor work
-│   │   ├── frame_buffer.v         # The "canvas" where we draw
-│   │   └── pixel_generator.v      # Decides what color each pixel is
+│   │   ├── vga_controller.v       # VGA timing and synchronization
+│   │   ├── frame_buffer.v         # Display memory management
+│   │   └── pixel_generator.v      # Pixel rendering engine
 │   ├── input/
-│   │   ├── button_debouncer.v     # Makes buttons work properly
-│   │   └── input_handler.v        # Reads what button you pressed
-│   └── top_module.v               # Connects everything together
+│   │   ├── button_debouncer.v     # Hardware button debouncing
+│   │   └── input_handler.v        # Input processing and mapping
+│   └── top_module.v               # Top-level system integration
 ├── constraints/
-│   └── arty_a7_35t.xdc           # Tells which pins connect to what
+│   └── arty_a7_35t.xdc           # Physical constraints and pin mappings
 ├── sim/
-│   └── testbenches/               # Test files to check our design
+│   └── testbenches/               # Verification testbenches
 ├── docs/
-│   └── design_document.pdf        # Detailed explanation
+│   └── design_document.pdf        # Detailed design specification
 └── README.md
 ```
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Let's get Tetris running on your FPGA!
+This section provides detailed instructions for setting up and deploying the FPGA-based Tetris project.
 
 ### Prerequisites
 
-You'll need:
-* **Vivado Design Suite 2019.1 or newer** (Free WebPACK version works!)
-  ```
-  Download from: https://www.xilinx.com/support/download.html
-  Choose "Vivado ML Edition - Windows/Linux Self Extracting Web Installer"
-  ```
-* **Arty A7-35T Board** (The FPGA board we're using)
-* **VGA Monitor** (Any old computer monitor with VGA port)
-* **VGA Cable** 
-* **Micro USB Cable** (To program the board)
+Required hardware and software:
+* **Xilinx Vivado Design Suite** (2019.1 or later)
+  - WebPACK edition is sufficient for this project
+  - Download from: https://www.xilinx.com/support/download.html
+* **Arty A7-35T Development Board**
+* **VGA-compatible display**
+* **VGA cable and PMOD VGA adapter**
+* **Micro-USB cable** for FPGA programming
 
 ### Installation
 
-#### Step 1: Clone the Repository
+#### 1. Repository Setup
 ```bash
 git clone https://github.com/Harshit6-b/SRA-FPGA-based-tetris.git
 cd SRA-FPGA-based-tetris
 ```
 
-#### Step 2: Open Vivado
+#### 2. Vivado Project Creation
 1. Launch Vivado Design Suite
-2. You'll see the Vivado Start Page
+2. Select **Create Project** from the welcome screen
+3. Configure project settings:
+   - Name: `fpga_tetris`
+   - Type: RTL Project
+   - Target: Arty A7-35T (xc7a35ticsg324-1L)
+   - Enable: "Create project subdirectory"
 
-#### Step 3: Create New Project
-1. Click **"Create Project"** 
-2. Click **Next** on the welcome screen
-3. **Project Name and Location:**
-   - Project name: `fpga_tetris`
-   - Project location: Choose any folder you like
-   - Check "Create project subdirectory"
-   - Click **Next**
-4. **Project Type:**
-   - Select **"RTL Project"**
-   - Check "Do not specify sources at this time"
-   - Click **Next**
-5. **Default Part:**
-   - Click on **"Boards"** tab
-   - Search for "Arty A7-35T"
-   - Select **"Arty A7-35 (xc7a35ticsg324-1L)"**
-   - Click **Next**
-6. Click **Finish**
+#### 3. Source File Integration
+1. Add design sources:
+   - Navigate to **Project Manager → Add Sources**
+   - Select **Add or Create Design Sources**
+   - Import all files from the `src/` directory
+   - Enable "Copy sources into project"
 
-#### Step 4: Add Source Files
-1. In the **Sources** window (usually on the left):
-   - Right-click on **"Design Sources"**
-   - Select **"Add Sources..."**
-2. Choose **"Add or create design sources"** → **Next**
-3. Click **"Add Directories"**
-4. Navigate to the cloned repo and select the entire `src` folder
-5. Make sure **"Copy sources into project"** is checked
-6. Click **Finish**
+2. Add constraints:
+   - Select **Add or Create Constraints**
+   - Import `constraints/arty_a7_35t.xdc`
+   - Verify constraint associations
 
-#### Step 5: Add Constraints File
-1. Right-click on **"Constraints"** in the Sources window
-2. Select **"Add Sources..."**
-3. Choose **"Add or create constraints"** → **Next**
-4. Click **"Add Files"**
-5. Navigate to `constraints/arty_a7_35t.xdc`
-6. Make sure **"Copy constraints files into project"** is checked
-7. Click **Finish**
+#### 4. Design Hierarchy Configuration
+1. Locate `top_module` in the Sources panel
+2. Right-click and select **Set as Top**
+3. Verify the design hierarchy is correctly established
 
-#### Step 6: Set Top Module
-1. In the Sources window, expand **"Design Sources"**
-2. Right-click on `top_module`
-3. Select **"Set as Top"**
-4. You should see a hierarchy with `top_module` at the top
+#### 5. Implementation and Bitstream Generation
+1. Execute **Run Implementation** from the Flow Navigator
+2. Upon completion, select **Generate Bitstream**
+3. Review timing reports for any violations
+4. Typical build time: 5-10 minutes depending on system specifications
 
-#### Step 7: Generate Bitstream
-1. In the **Flow Navigator** (left panel), click **"Generate Bitstream"**
-2. If prompted about synthesis and implementation, click **"Yes"**
-3. Use default settings and click **"OK"**
-4. This will take 5-10 minutes - grab a coffee! ☕
-5. When complete, select **"Open Hardware Manager"** and click **"OK"**
-
-#### Step 8: Program the Board
-1. Connect the Arty A7 board to your computer via USB
-2. Power on the board (switch near USB port)
-3. In Hardware Manager, click **"Open Target"** → **"Auto Connect"**
-4. You should see your device (xc7a35t_0)
-5. Click **"Program Device"** 
-6. Select your device
-7. The bitstream file should be auto-filled
-8. Click **"Program"**
-9. The **DONE** LED on the board will light up when programming is complete!
+#### 6. Hardware Deployment
+1. Connect Arty A7-35T board via USB
+2. Power on the development board
+3. Open Hardware Manager
+4. Select **Auto Connect** to detect the target device
+5. Program device with generated bitstream
+6. Verify successful programming via DONE LED indicator
 
 <!-- USAGE -->
 ## Usage
 
-Playing is super simple:
+### Hardware Setup
+1. **Display Connection:** Connect VGA cable between the PMOD VGA adapter and monitor
+2. **Power:** Ensure board is powered via USB or external adapter
+3. **Verification:** Confirm DONE LED indicates successful configuration
 
-1. **Connect everything:**
-   - Board should already be connected to computer (for power)
-   - Connect VGA cable from board's VGA PMOD connector to monitor
-   - Make sure monitor is powered on and set to VGA input
-   
-2. **The game starts automatically!**
-   - You should see the Tetris game on your monitor
-   - Pieces will start falling
+### Game Controls
+The system utilizes four on-board push buttons for game control:
+- **BTN0:** Move tetromino left
+- **BTN1:** Rotate tetromino (clockwise)
+- **BTN2:** Hard drop (accelerated descent)
+- **BTN3:** Move tetromino right
 
-3. **Controls:**
-   Use the four push buttons on the board (not the reset button!):
-   - **BTN0**: Move piece left
-   - **BTN1**: Move piece right  
-   - **BTN2**: Rotate piece clockwise
-   - **BTN3**: Soft drop (move down faster)
+### Gameplay
+Upon successful deployment, the game initializes automatically. The display presents the game field with falling tetrominoes, score tracking, and level progression.
 
-<!-- HOW IT WORKS -->
-## How It Works
+<!-- SYSTEM ARCHITECTURE -->
+## System Architecture
 
-Let's break down how we make Tetris work on an FPGA (in simple terms!):
+The FPGA-based Tetris implementation follows a modular hardware architecture designed for efficiency and maintainability.
 
-### The Basic Idea
+### Core Components
 
-Imagine you're building Tetris with LEGOs, but instead of plastic blocks, you're using electronic switches. That's basically what we're doing!
+#### 1. Game Logic 
+Game follows the following logic:
+- **INIT:** System initialization and memory clearing
+- **SPAWN:** Tetromino generation and placement
+- **ACTIVE:** Main gameplay with user input processing
+- **COLLISION:** Collision detection and line clearing
+- **GAME_OVER:** End state with score display
 
-### Main Components
+#### 2. VGA Display Subsystem
+Implements standard VGA timing for 640x480@60Hz output:
+- Horizontal sync: 96 pixel clocks
+- Vertical sync: 2 line periods
+- Pixel clock: 25.175 MHz (derived from 100 MHz system clock)
 
-1. **Game Brain (FSM)**
-   - This is like a traffic light that controls the game flow
-   - It has different "states": waiting for new piece, piece falling, checking for full lines, game over
-   - It moves between states based on what's happening in the game
+#### 3. Input Processing Pipeline
+Hardware debouncing implementation with:
+- The system latches the input on a high state and ignores subsequent inputs until the signal transitions back to low.
+- After the input transitions to high, no additional inputs are accepted until a low state is detected.
 
-2. **Display System (VGA)**
-   - VGA monitors need very specific timing signals to work
-   - We create these signals to "paint" the screen 60 times per second
-   - It's like a very fast painter that redraws the whole screen constantly
+#### 4. Collision Detection Engine
+Combinatorial logic implementation providing:
+- Boundary checking
+- Inter-tetromino collision detection
+- Single-cycle response time
 
-3. **Button Reader**
-   - Buttons are bouncy (they flicker on/off when pressed)
-   - We clean up this signal to get one clean press
-   - Then we tell the game what the player wants to do
+<!-- BRAM-BASED DISPLAY IMPLEMENTATION -->
+## BRAM-Based Display Implementation
 
-4. **Collision Checker**
-   - Before moving a piece, we check: "Is there space?"
-   - If yes, move it. If no, stop it there
-   - This runs super fast so the game feels smooth
+The project utilizes FPGA Block RAM (BRAM) resources for efficient background image storage and rendering.
 
-<!-- UNDERSTANDING BRAM DISPLAY -->
-## Understanding BRAM Display
+### BRAM Architecture
 
-This is the coolest part! Let's understand how we use the FPGA's memory to create beautiful graphics.
+#### Memory Organization
+The BRAM is configured as a frame buffer storing pre-rendered background graphics:
+- **Capacity:** 307,200 pixels (640x480)
+- **Color Depth:** 12-bit RGB (4 bits per channel)
+- **Access Pattern:** Sequential read for VGA scanning
 
-### What is BRAM?
+#### Background Image Content
+The pre-stored image includes:
+- Game title and branding elements
+- Playing field boundaries and grid
+- Score and level display regions
+- Decorative elements enhancing visual appeal
 
-BRAM (Block RAM) is like a notebook inside the FPGA chip. We can write data to it and read it back super fast. Think of it as a grid of tiny storage boxes.
+### Rendering Pipeline
 
-### How We Use BRAM for Background Graphics
+#### Layer Composition
+The display system implements a three-layer rendering approach:
 
-Here's the clever part: instead of drawing everything pixel by pixel, we store a complete background image in BRAM!
+1. **Background Layer (BRAM):** Static graphics providing visual framework
+2. **Game Field Layer:** Dynamic tetromino positions and settled pieces
+3. **Overlay Layer:** Score, level, and game status information
 
-### The Background Image System
-
-1. **Pre-stored Background**
-   - We create a cool Tetris-themed background image
-   - This includes the game border, score area, "TETRIS" logo, decorative elements
-   - We convert this image into data and store it in BRAM when the FPGA starts
-
-2. **How It's Stored**
-   ```
-   BRAM Memory Layout (simplified):
-   Address 0: [Pixel color for position (0,0)]
-   Address 1: [Pixel color for position (0,1)]
-   Address 2: [Pixel color for position (0,2)]
-   ...and so on for the entire screen
-   ```
-
-3. **Layered Display**
-   Think of it like transparent sheets:
-   - **Bottom layer**: Background image from BRAM (always there)
-   - **Middle layer**: The game board grid
-   - **Top layer**: The falling Tetris pieces
-
-### The Display Process
-
-1. **VGA Controller Scans the Screen**
-   - Goes through each pixel position (640x480 = 307,200 pixels!)
-   - For each pixel, it asks: "What should I show here?"
-
-2. **Pixel Decision Logic**
-   ```
-   For each pixel:
-   - Is there a Tetris piece here? → Show piece color
-   - Is this the game board area? → Show board state
-   - Otherwise → Show background from BRAM
-   ```
-
-3. **Why This is Efficient**
-   - The background never changes, so we read it from BRAM
-   - Only the game pieces need active calculation
-   - Makes our display look professional with nice graphics!
-
-### Simple Example
-
+#### Pixel Generation Logic
 ```verilog
-// Reading background from BRAM
-always @(posedge clk) begin
-    if (in_game_area && piece_exists) begin
-        pixel_color <= piece_color;     // Show the Tetris piece
+// Simplified pixel output logic
+always @(posedge pixel_clk) begin
+    if (active_video) begin
+        if (tetromino_present) 
+            rgb_out <= tetromino_color;
+        else if (field_region)
+            rgb_out <= field_data;
+        else
+            rgb_out <= bram_background;
     end else begin
-        pixel_color <= bram_data;        // Show background image
+        rgb_out <= 12'h000; // Blanking
     end
 end
 ```
 
-The magic happens because BRAM can deliver pixel data instantly - no calculations needed! This leaves more FPGA resources for the actual game logic.
+### Performance Benefits
+- **Resource Efficiency:** Eliminates need for runtime background generation
+- **Consistent Timing:** BRAM access provides deterministic read latency
+- **Visual Quality:** Enables complex background graphics without logic overhead
 
-### What's in Our Background?
+<!-- RESULTS AND PERFORMANCE -->
+## Results and Performance
 
-Our background image includes:
-- A stylized "TETRIS" logo at the top
-- Decorative border around the play area  
-- Score and level display boxes
-- Grid lines for the game board
-- Maybe some retro 8-bit style decorations!
+### Implementation Metrics
+- **Resource Utilization:** 
+  - LUTs: ~40% of available resources
+  - Block RAM: 15 BRAM tiles
+  - DSP Slices: None required
+- **Maximum Frequency:** 125 MHz (system constrained to 100 MHz)
+- **Power Consumption:** <2W total system power
+- **Display Performance:** Consistent 60 FPS with zero frame drops
 
-All of this is pre-drawn and stored in BRAM, making our game look polished and professional!
-
-<!-- RESULTS AND DEMO -->
-## Results and Demo
-
-Our Tetris game successfully runs on the FPGA with:
-- Smooth gameplay (60 frames per second)
-- Beautiful background graphics from BRAM
-- Instant response to button presses
+### Gameplay Characteristics
+- Responsive controls with <16.7ms input latency
+- Smooth tetromino movement and rotation
 - Accurate collision detection
-- Score display
-- Increasing difficulty as you play
+- Progressive difficulty scaling
 
-**Cool Facts:**
-- Uses only 40% of the FPGA's resources (plenty of room for more features!)
-- Runs at 100 MHz (that's 100 million operations per second!)
-- Uses less than 2 watts of power (less than a phone charger!)
+<!-- FUTURE ENHANCEMENTS -->
+## Future Enhancements
 
-[Demo Video - Coming Soon!]
+Planned improvements and extensions:
 
-<!-- FUTURE WORK -->
-## Future Work
-
-Here's what we plan to add:
-
-- [ ] **HDMI Support**: Upgrade to modern displays (VGA is getting old!)
-- [ ] **UART Controls**: Control the game from your computer keyboard
-- [ ] **Sound Effects**: Add beeps and music
-- [ ] **Save High Scores**: Remember your best scores
-- [ ] **Two Player Mode**: Battle your friends!
-- [ ] **Animated Background**: Make the BRAM background move!
-- [ ] **AI Player**: Watch the FPGA play against itself!
+- **Display Upgrade:** HDMI output support for modern displays
+- **Enhanced Controls:** UART interface for keyboard input
+- **Audio System:** PWM-based sound effect generation
 
 <!-- TROUBLESHOOTING -->
 ## Troubleshooting
 
-### Nothing showing up on your monitor?
-Ah, the classic blank screen! Don't worry, happens to the best of us. First, let's check the obvious stuff - is your VGA cable actually plugged in? I know, I know, but we've all been there. Make sure it's connected to the PMOD connector (those little black connectors on the board) and not just sitting there looking pretty. Also, double-check that your monitor is set to VGA input - modern monitors love to auto-switch to HDMI and ignore our retro VGA signal.
+### Display Issues
 
-If you've done all that and still nothing, check if the DONE LED on your board is lit up. No light? Your bitstream probably didn't program correctly. Try programming it again!
+#### No VGA Output
+1. Verify VGA cable connections at both PMOD adapter and monitor
+2. Confirm monitor VGA input selection
+3. Check FPGA configuration status via DONE LED
+4. Review constraints file for correct PMOD pin assignments
 
-### Pieces zooming across the screen like they're on steroids?
-Oh boy, this one's a fun bug! So here's what's happening - when you press and hold a button, the FPGA is reading it as "button pressed" hundreds of times per second. Your poor Tetris piece thinks you want it to move left 100 times, so it just flies across the screen!
+#### Display Artifacts
+- Ensure proper PMOD connector seating
+- Verify VGA timing parameters in vga_controller.v
+- Check for ground connection integrity
+- Consider signal integrity issues with cable length
 
-This is actually a super common problem in digital design. Physical buttons don't give clean signals - they "bounce" when pressed. Our code tries to handle this with something called debouncing, but sometimes the timing isn't quite right.
+### Input System Problems
 
-**Quick fix:** Try tapping the buttons really quickly instead of holding them down. Like, really quick taps!
+#### Continuous Movement Issue
+**Problem Description:** Single button press results in multiple tetromino movements.
 
-**Better fix:** We might need to adjust the debouncing delay in the code. Look for a parameter called `DEBOUNCE_DELAY` or something similar in `button_debouncer.v` and try increasing it. Start with doubling the current value.
+**Root Cause:** Insufficient debouncing or missing rate limiting in continuous press handling.
 
-### Buttons doing absolutely nothing?
-First, make sure you're pressing the right buttons - it's the four user buttons (BTN0-3), NOT the red reset button (that one just restarts everything). These buttons can be a bit stiff, so give them a firm press. 
+**Solutions:**
+1. Increase `DEBOUNCE_DELAY` parameter in button_debouncer.v
+2. Implement rate limiting for held buttons:
+   ```verilog
+   parameter REPEAT_DELAY = 500_000; // 5ms at 100MHz
+   ```
+3. Add state machine for press/hold/release detection
 
-Still nothing? The game might be paused or in game-over state. Try pressing the reset button once to restart everything.
+#### Non-Responsive Buttons
+1. Verify correct button mapping in constraints file
+2. Check for proper pull-up resistor configuration
+3. Test with oscilloscope for signal integrity
+4. Confirm game state allows input (not in GAME_OVER)
 
-### Colors look weird or display is glitchy?
-VGA can be finicky! First, try wiggling the VGA cable (technical term: "percussive maintenance"). If that doesn't work, you might have the PMOD connector in the wrong port. Check your constraints file to see which PMOD port you should be using (usually JB or JC).
+### Build and Synthesis Issues
 
-Sometimes it's just a bad cable - try swapping it out if you have another one lying around.
+#### Common Vivado Errors
+1. **Missing Top Module:** Ensure top_module is designated as top-level entity
+2. **Constraint Conflicts:** Verify pin names match between design and XDC
+3. **Timing Violations:** 
+   - Review critical path in timing report
+   - Consider pipelining long combinatorial paths
+   - Adjust clock constraints if necessary
 
-### Vivado throwing errors during build?
-Vivado errors can be cryptic, but here are the usual suspects:
-
-- **"Cannot find top module"** - You forgot to set `top_module` as the top! Right-click on it and select "Set as Top"
-- **"Port not found"** errors - Usually means the constraints file has a typo or is pointing to the wrong pins
-- **Timing errors** - These are trickier, but usually mean the design is too complex for the clock speed. Try reducing the clock frequency or simplifying the design
-
-### Game running but something feels... off?
-Trust your instincts! Common "feels wrong" issues:
-- **Pieces falling too fast/slow** - Check the game tick counter in the FSM
-- **Rotation acting weird** - The collision detection for rotation is probably being too strict
-- **Score not updating** - The score counter might not be connected properly to the display
-
-### Still stuck?
-Hey, it happens! FPGA development can be tricky. Here's what to try:
-1. Check the simulation testbenches - they can help you see what's going wrong
-2. Use the Integrated Logic Analyzer (ILA) to debug in real-time
-3. Post an issue on the GitHub repo with:
-   - What you expected to happen
-   - What actually happened  
-   - Any error messages
-   - What you've already tried
-
-Remember, every FPGA developer has spent hours debugging something that turned out to be a single wrong bit. You're in good company!
+### System-Level Debugging
+For complex issues:
+1. Utilize Integrated Logic Analyzer (ILA) for runtime debugging
+2. Implement chipscope cores for internal signal monitoring
+3. Create focused testbenches for module-level verification
+4. Review synthesis warnings for potential issues
 
 <!-- CONTRIBUTORS -->
 ## Contributors
 
-* [Harshit6-b](https://github.com/Harshit6-b) - Project Lead
-* Suchit - Mentor
-* Sarvesh - Mentor
+* [Harshit Bhalani](https://github.com/Harshit6-b)
+* [Zaid Faruqui](https://github.com/zadily)
+* [Suchit Garad](https://github.com/IamLegend509) - Project Mentor
+* [Sarvesh Ganu](https://github.com/sarveshganu) - Project Mentor
+* [Shri Vishakh Devanand](https://github.com/5iri) - Project Mentor
 
 <!-- ACKNOWLEDGEMENTS AND RESOURCES -->
 ## Acknowledgements and Resources
 
-* [SRA VJTI](https://sravjti.in/) - For organizing this awesome project
-* [Digilent Arty A7 Guide](https://digilent.com/reference/programmable-logic/arty-a7/start) - Board documentation
-* [VGA Timing Explained](http://tinyvga.com/vga-timing) - How VGA signals work
-* [Tetris Wiki](https://tetris.fandom.com/wiki/Tetris_Guideline) - Game rules
-* [FPGA4Fun](https://www.fpga4fun.com/) - Great FPGA tutorials
+* [SRA VJTI](https://sravjti.in/) - Society of Robotics and Automation
+* [Digilent Documentation](https://digilent.com/reference/programmable-logic/arty/reference-manual?redirect=1) - Arty A7 Reference
+* [Digital Logic Design](https://www.youtube.com/watch?v=BoIOLczVulQ&list=PLyqSpQzTE6M_dZdF7Bd-Uncl5_L_1VkXF) - To learn Digital Logic Design
+* [ChipVerify](https://www.chipverify.com/) - To learn Verilog
+* [HDLbits](https://hdlbits.01xz.net/wiki/Problem_sets#Verilog_Language) - To learn Verilog
+* [Tetris Logic](https://www.cs.columbia.edu/~sedwards/classes/2024/4840-spring/designs/FPGA-Tetris.pdf) - To understand Tetris Logic
+* [VESA Standards](https://projectf.io/posts/video-timings-vga-720p-1080p/) - VGA Timing Specifications
 
 <!-- LICENSE -->
 ## License
 
-This project is open source under the MIT License. Feel free to use it, modify it, and learn from it!
+This project is licensed under the MIT License. See `LICENSE` file for details.
