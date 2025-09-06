@@ -106,7 +106,7 @@ module uart_led_top(
     input  wire clk,      // 25 MHz clock
     input  wire reset,    // active-high reset
     input  wire RxD,      // UART RX pin
-    output reg [15:0] led // Arty A7 onboard LEDs
+    output reg [7:0] led // Arty A7 onboard LEDs
 );
 
     wire [7:0] uart_data;
@@ -122,10 +122,9 @@ module uart_led_top(
 
     always @(posedge clk or posedge reset) begin
         if (reset)
-            led <= 16'h0000;
+            led <= 8'h0000;
         else if (data_valid) begin
-            led[7:0]  <= uart_data;
-            led[15:8] <= uart_data;
+            led  <= uart_data;
         end
     end
 
