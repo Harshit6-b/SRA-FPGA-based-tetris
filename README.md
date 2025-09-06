@@ -1,28 +1,5 @@
 # FPGA-Based Tetris
 
-<!-- PROJECT LOGO -->
-<br />
-<p align="center">
-  <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Tetris_logo.png/200px-Tetris_logo.png" alt="Logo" width="200" height="100">
-  </a>
-
-  <h3 align="center">FPGA-Based Tetris</h3>
-
-  <p align="center">
-    A hardware-accelerated Tetris implementation on Xilinx Artix-7 FPGA
-    <br />
-    <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris">View Demo</a>
-    ·
-    <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/Harshit6-b/SRA-FPGA-based-tetris/issues">Request Feature</a>
-  </p>
-</p>
-
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
