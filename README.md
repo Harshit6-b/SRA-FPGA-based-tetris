@@ -48,27 +48,31 @@ This project implements a fully functional Tetris game using pure digital logic 
 ### File Structure
 ```
 SRA-FPGA-based-tetris/
-├── src/
-│   ├── game_logic/
-│   │   ├── tetris_fsm.v          # Main game state machine controller
-│   │   ├── collision_detector.v   # Hardware collision detection engine
-│   │   ├── score_counter.v        # Score tracking and display logic
-│   │   └── piece_generator.v      # Pseudo-random piece generation
-│   ├── graphics/
-│   │   ├── vga_controller.v       # VGA timing and synchronization
-│   │   ├── frame_buffer.v         # Display memory management
-│   │   └── pixel_generator.v      # Pixel rendering engine
-│   ├── input/
-│   │   ├── button_debouncer.v     # Hardware button debouncing
-│   │   └── input_handler.v        # Input processing and mapping
-│   └── top_module.v               # Top-level system integration
-├── constraints/
-│   └── arty_a7_35t.xdc           # Physical constraints and pin mappings
-├── sim/
-│   └── testbenches/               # Verification testbenches
-├── docs/
-│   └── design_document.pdf        # Detailed design specification
-└── README.md
+|___assets
+|    |____Finalforeklavya.png
+|    |____input.coe
+|
+|___rtl
+|   |____HDMI
+|   |    |___Binary_Loader.v
+|   |    |___Serializer.v
+|   |    |___Tmds_Encoder.v
+|   |    |___Top.v
+|   |
+|   |____UART
+|   |    |___receiver.v
+|   |
+|   |___Tetris_Logic.v
+|   |___Top.v
+|   |___VGA_binary_loader.v
+|   
+|___tb
+|   |___Testbench.v
+|
+|___Constraints.xdc
+|
+|___README.md
+
 ```
 
 <!-- GETTING STARTED -->
