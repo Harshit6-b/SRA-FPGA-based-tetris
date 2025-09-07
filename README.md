@@ -64,11 +64,8 @@ SRA-FPGA-based-tetris/
 
 <!-- GETTING STARTED -->
 ## Getting Started
-
 This section provides detailed instructions for setting up and deploying the FPGA-based Tetris project.
-
 ### Prerequisites
-
 Required hardware and software:
 * **Xilinx Vivado Design Suite** (2019.1 or later)
   - WebPACK edition is sufficient for this project
@@ -79,13 +76,11 @@ Required hardware and software:
 * **Micro-USB cable** for FPGA programming
 
 ### Installation
-
 #### 1. Repository Setup
 ```bash
 git clone https://github.com/Harshit6-b/SRA-FPGA-based-tetris.git
 cd SRA-FPGA-based-tetris
 ```
-
 #### 2. Vivado Project Creation
 1. Launch Vivado Design Suite
 2. Select **Create Project** from the welcome screen
@@ -125,7 +120,6 @@ cd SRA-FPGA-based-tetris
 <!-- SYSTEM ARCHITECTURE -->
 ## System Architecture
 The FPGA-based Tetris implementation follows a modular hardware architecture designed for efficiency and maintainability.
-
 ### Core Components
 #### 1. Game Logic 
 Game follows the following logic:
@@ -155,7 +149,6 @@ Combinatorial logic implementation providing:
 <!-- BRAM-BASED DISPLAY IMPLEMENTATION -->
 ## BRAM-Based Display Implementation
 The project utilizes FPGA Block RAM (BRAM) resources for efficient background image storage and rendering.
-
 ### BRAM Architecture
 #### Memory Organization
 The BRAM is configured as a frame buffer storing pre-rendered background graphics:
@@ -171,7 +164,6 @@ The pre-stored image includes:
 - Decorative elements enhancing visual appeal
 
 ### Rendering Pipeline
-
 #### Layer Composition
 The display system implements a three-layer rendering approach:
 1. **Background Layer (BRAM):** Static graphics providing visual framework
@@ -185,18 +177,14 @@ The display system implements a three-layer rendering approach:
 
 <!-- FUTURE ENHANCEMENTS -->
 ## Future Enhancements
-
 Planned improvements and extensions:
-
 - **Display Upgrade:** HDMI output support for modern displays
 - **Enhanced Controls:** UART interface for keyboard input
 - **Audio System:** PWM-based sound effect generation
 
 <!-- TROUBLESHOOTING -->
 ## Troubleshooting
-
 ### Display Issues
-
 #### No VGA Output
 1. Verify VGA cable connections at both PMOD adapter and monitor
 2. Confirm monitor VGA input selection
@@ -210,7 +198,6 @@ Planned improvements and extensions:
 - Consider signal integrity issues with cable length
 
 ### Input System Problems
-
 #### Non-Responsive Buttons
 1. Verify correct button mapping in constraints file
 2. Check for proper pull-up resistor configuration
@@ -218,7 +205,6 @@ Planned improvements and extensions:
 4. Confirm game state allows input (not in GAME_OVER)
 
 ### Build and Synthesis Issues
-
 #### Common Vivado Errors
 1. **Missing Top Module:** Ensure top_module is designated as top-level entity
 2. **Constraint Conflicts:** Verify pin names match between design and XDC
@@ -226,7 +212,6 @@ Planned improvements and extensions:
 
 <!-- CONTRIBUTORS -->
 ## Contributors
-
 * [Harshit Bhalani](https://github.com/Harshit6-b)
 * [Zaid Faruqui](https://github.com/zadily)
 * [Suchit Garad](https://github.com/IamLegend509) - Project Mentor
@@ -235,7 +220,6 @@ Planned improvements and extensions:
 
 <!-- ACKNOWLEDGEMENTS AND RESOURCES -->
 ## Acknowledgements and Resources
-
 * [SRA VJTI](https://sravjti.in/) - Society of Robotics and Automation
 * [Digilent Documentation](https://digilent.com/reference/programmable-logic/arty/reference-manual?redirect=1) - Arty A7 Reference
 * [Digital Logic Design](https://www.youtube.com/watch?v=BoIOLczVulQ&list=PLyqSpQzTE6M_dZdF7Bd-Uncl5_L_1VkXF) - To learn Digital Logic Design
