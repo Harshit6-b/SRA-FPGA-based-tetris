@@ -9,7 +9,6 @@
 * [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
-* [Usage](#usage)
 * [System Architecture](#system-architecture)
 * [BRAM-Based Display Implementation](#bram-based-display-implementation)
 * [Results and Performance](#results-and-performance)
@@ -138,24 +137,6 @@ cd SRA-FPGA-based-tetris
 4. Select **Auto Connect** to detect the target device
 5. Program device with generated bitstream
 6. Verify successful programming via DONE LED indicator
-
-<!-- USAGE -->
-## Usage
-
-### Hardware Setup
-1. **Display Connection:** Connect VGA cable between the PMOD VGA adapter and monitor
-2. **Power:** Ensure board is powered via USB or external adapter
-3. **Verification:** Confirm DONE LED indicates successful configuration
-
-### Game Controls
-The system utilizes four on-board push buttons for game control:
-- **BTN0:** Move tetromino left
-- **BTN1:** Rotate tetromino (clockwise)
-- **BTN2:** Hard drop (accelerated descent)
-- **BTN3:** Move tetromino right
-
-### Gameplay
-Upon successful deployment, the game initializes automatically. The display presents the game field with falling tetrominoes, score tracking, and level progression.
 
 <!-- SYSTEM ARCHITECTURE -->
 ## System Architecture
