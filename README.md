@@ -253,13 +253,6 @@ Planned improvements and extensions:
    - Consider pipelining long combinatorial paths
    - Adjust clock constraints if necessary
 
-### System-Level Debugging
-For complex issues:
-1. Utilize Integrated Logic Analyzer (ILA) for runtime debugging
-2. Implement chipscope cores for internal signal monitoring
-3. Create focused testbenches for module-level verification
-4. Review synthesis warnings for potential issues
-
 <!-- CONTRIBUTORS -->
 ## Contributors
 
