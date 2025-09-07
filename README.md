@@ -11,7 +11,6 @@
   * [Installation](#installation)
 * [System Architecture](#system-architecture)
 * [BRAM-Based Display Implementation](#bram-based-display-implementation)
-* [Results and Performance](#results-and-performance)
 * [Future Enhancements](#future-enhancements)
 * [Troubleshooting](#troubleshooting)
 * [Contributors](#contributors)
@@ -220,24 +219,6 @@ end
 - **Resource Efficiency:** Eliminates need for runtime background generation
 - **Consistent Timing:** BRAM access provides deterministic read latency
 - **Visual Quality:** Enables complex background graphics without logic overhead
-
-<!-- RESULTS AND PERFORMANCE -->
-## Results and Performance
-
-### Implementation Metrics
-- **Resource Utilization:** 
-  - LUTs: ~40% of available resources
-  - Block RAM: 15 BRAM tiles
-  - DSP Slices: None required
-- **Maximum Frequency:** 125 MHz (system constrained to 100 MHz)
-- **Power Consumption:** <2W total system power
-- **Display Performance:** Consistent 60 FPS with zero frame drops
-
-### Gameplay Characteristics
-- Responsive controls with <16.7ms input latency
-- Smooth tetromino movement and rotation
-- Accurate collision detection
-- Progressive difficulty scaling
 
 <!-- FUTURE ENHANCEMENTS -->
 ## Future Enhancements
