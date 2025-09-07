@@ -63,9 +63,6 @@ SRA-FPGA-based-tetris/
 |   |___Tetris_Logic.v
 |   |___Top.v
 |   |___VGA_binary_loader.v
-|   
-|___tb
-|   |___Testbench.v
 |
 |___Constraints.xdc
 |
