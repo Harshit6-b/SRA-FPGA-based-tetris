@@ -342,7 +342,3 @@ For complex issues:
 * [Tetris Logic](https://www.cs.columbia.edu/~sedwards/classes/2024/4840-spring/designs/FPGA-Tetris.pdf) - To understand Tetris Logic
 * [VESA Standards](https://projectf.io/posts/video-timings-vga-720p-1080p/) - VGA Timing Specifications
 
-<!-- LICENSE -->
-## License
-
-This project is licensed under the MIT License. See `LICENSE` file for details.
