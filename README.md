@@ -244,8 +244,7 @@ Planned improvements and extensions:
 #### Common Vivado Errors
 1. **Missing Top Module:** Ensure top_module is designated as top-level entity
 2. **Constraint Conflicts:** Verify pin names match between design and XDC
-3. **Timing Violations:** 
-   - Adjust clock constraints if necessary
+3. **Timing Violations:** Adjust clock constraints if necessary
 
 <!-- CONTRIBUTORS -->
 ## Contributors
