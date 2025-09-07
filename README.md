@@ -22,14 +22,6 @@
 
 This project implements a fully functional Tetris game using pure digital logic on the Xilinx Artix-7 FPGA platform. Unlike software-based implementations, this design operates entirely in hardware, providing deterministic performance and real-time responsiveness.
 
-**Key Features:**
-* Complete hardware implementation using Verilog HDL
-* Real-time VGA output at 640x480 resolution, 60Hz refresh rate
-* Hardware-accelerated collision detection and game logic
-* BRAM-based background rendering system
-* Button-based user input with hardware debouncing
-* Self-contained system requiring no external processor
-
 **Project Specifications:**
 * **Target Platform:** Arty A7-35T Development Board
 * **Design Complexity:** Medium
