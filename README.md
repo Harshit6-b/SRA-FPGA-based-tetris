@@ -245,8 +245,6 @@ Planned improvements and extensions:
 1. **Missing Top Module:** Ensure top_module is designated as top-level entity
 2. **Constraint Conflicts:** Verify pin names match between design and XDC
 3. **Timing Violations:** 
-   - Review critical path in timing report
-   - Consider pipelining long combinatorial paths
    - Adjust clock constraints if necessary
 
 <!-- CONTRIBUTORS -->
