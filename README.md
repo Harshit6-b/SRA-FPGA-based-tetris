@@ -237,19 +237,6 @@ Planned improvements and extensions:
 
 ### Input System Problems
 
-#### Continuous Movement Issue
-**Problem Description:** Single button press results in multiple tetromino movements.
-
-**Root Cause:** Insufficient debouncing or missing rate limiting in continuous press handling.
-
-**Solutions:**
-1. Increase `DEBOUNCE_DELAY` parameter in button_debouncer.v
-2. Implement rate limiting for held buttons:
-   ```verilog
-   parameter REPEAT_DELAY = 500_000; // 5ms at 100MHz
-   ```
-3. Add state machine for press/hold/release detection
-
 #### Non-Responsive Buttons
 1. Verify correct button mapping in constraints file
 2. Check for proper pull-up resistor configuration
