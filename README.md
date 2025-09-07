@@ -124,11 +124,9 @@ cd SRA-FPGA-based-tetris
 
 <!-- SYSTEM ARCHITECTURE -->
 ## System Architecture
-
 The FPGA-based Tetris implementation follows a modular hardware architecture designed for efficiency and maintainability.
 
 ### Core Components
-
 #### 1. Game Logic 
 Game follows the following logic:
 - **INIT:** System initialization and memory clearing
@@ -156,11 +154,9 @@ Combinatorial logic implementation providing:
 
 <!-- BRAM-BASED DISPLAY IMPLEMENTATION -->
 ## BRAM-Based Display Implementation
-
 The project utilizes FPGA Block RAM (BRAM) resources for efficient background image storage and rendering.
 
 ### BRAM Architecture
-
 #### Memory Organization
 The BRAM is configured as a frame buffer storing pre-rendered background graphics:
 - **Capacity:** 307,200 pixels (640x480)
@@ -178,27 +174,9 @@ The pre-stored image includes:
 
 #### Layer Composition
 The display system implements a three-layer rendering approach:
-
 1. **Background Layer (BRAM):** Static graphics providing visual framework
 2. **Game Field Layer:** Dynamic tetromino positions and settled pieces
 3. **Overlay Layer:** Score, level, and game status information
-
-#### Pixel Generation Logic
-```verilog
-// Simplified pixel output logic
-always @(posedge pixel_clk) begin
-    if (active_video) begin
-        if (tetromino_present) 
-            rgb_out <= tetromino_color;
-        else if (field_region)
-            rgb_out <= field_data;
-        else
-            rgb_out <= bram_background;
-    end else begin
-        rgb_out <= 12'h000; // Blanking
-    end
-end
-```
 
 ### Performance Benefits
 - **Resource Efficiency:** Eliminates need for runtime background generation
