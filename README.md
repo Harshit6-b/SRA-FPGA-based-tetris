@@ -93,24 +93,20 @@ cd SRA-FPGA-based-tetris
    - Name: `fpga_tetris`
    - Type: RTL Project
    - Target: Arty A7-35T (xc7a35ticsg324-1L)
-   - Enable: "Create project subdirectory"
 
 #### 3. Source File Integration
 1. Add design sources:
    - Navigate to **Project Manager → Add Sources**
    - Select **Add or Create Design Sources**
    - Import all files from the `src/` directory
-   - Enable "Copy sources into project"
 
 2. Add constraints:
    - Select **Add or Create Constraints**
    - Import `constraints/arty_a7_35t.xdc`
-   - Verify constraint associations
 
 #### 4. Design Hierarchy Configuration
 1. Locate `top_module` in the Sources panel
-2. Right-click and select **Set as Top**
-3. Verify the design hierarchy is correctly established
+2. Verify the design hierarchy is correctly established
 
 #### 5. Implementation and Bitstream Generation
 1. Execute **Run Implementation** from the Flow Navigator
