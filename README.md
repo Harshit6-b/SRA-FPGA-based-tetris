@@ -19,7 +19,6 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
 This project implements a fully functional Tetris game using pure digital logic on the Xilinx Artix-7 FPGA platform. Unlike software-based implementations, this design operates entirely in hardware, providing deterministic performance and real-time responsiveness.
 
 **Project Specifications:**
@@ -28,7 +27,6 @@ This project implements a fully functional Tetris game using pure digital logic 
 * **Primary Domains:** FPGA Development, Digital Design, Embedded Graphics
 
 ### Tech Stack
-
 * **Verilog HDL** - Hardware description language for RTL design
 * **Xilinx Vivado Design Suite** - FPGA synthesis and implementation toolchain
 * **Arty A7-35T** - Xilinx Artix-7 FPGA development platform
