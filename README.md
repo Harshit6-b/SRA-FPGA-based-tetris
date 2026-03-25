@@ -1,5 +1,5 @@
 # FPGA-Based Tetris
-
+![FPGA Tetris Gameplay](assets/VID_20250920_004334-1-ezgif.com-speed.gif)
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
