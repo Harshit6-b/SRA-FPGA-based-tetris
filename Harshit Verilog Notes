@@ -1,0 +1,418 @@
+What are modules?                                                                                        
+Modules are similar to functions 
+Syntax:
+  module module_name( output output_name );
+-    some code 
+  endmodule 
+If there is no code written in module it will behave as a wire giving zero output 
+
+
+WIRES
+They are unidirectional 
+Syntax :
+assign output = input;
+This means that the output is continuously given the input value 
+Sample code:
+    module top_module( 
+    input a, b, c,
+    output w, x, y, z 
+);
+    assign {w, x, y, z} = {a, b, b, c};
+endmodule
+(refer : https://hdlbits.01xz.net/wiki/Wire4)
+
+
+NOT GATE
+in c++ we use != in verilog we use =~ FOR NOT GATE 
+EXAMPLE:
+module top_module( input in, output out );
+assign out =~ in ;
+endmodule
+
+
+AND GATE 
+Verilog has separate bitwise-AND (&) and logical-AND (&&) operators, like C.
+Since we're working with a one-bit here, it doesn't matter which we choose.
+EXAMPLE : 
+module top_module( 
+    input a, 
+    input b, 
+    output out );
+assign out = a&b;
+endmodule
+
+
+OR GATE 
+Verilog has separate bitwise-OR (|) and logical-OR (||) operators, like C.
+Since we're working with a one-bit here, it doesn't matter which we choose.
+module top_module(
+    input a,
+    input b,
+    output out
+);
+    assign out = a | b;
+endmodule
+
+
+NOR GATE : 
+module top_module( 
+    input a, 
+    input b, 
+    output out );
+    assign out =~ (a|b); // Notice : That i have used bracket to specify priority
+endmodule
+
+
+XOR GATE :
+The bitwise-XOR operator is ^. There is no logical-XOR operator.
+
+
+DECLARING WIRE FOR COMPLEX CIRCUIT:
+SYNTAX: 
+wire wire_name;
+refer : https://hdlbits.01xz.net/wiki/Wire_decl for more explaination
+
+
+------VECTORS-------
+wire [99:0] my_vector;      // Declare a 100-element vector
+assign out = my_vector[10]; // Part-select one bit out of the vector
+
+Declaring Vectors
+Vectors must be declared:
+type [upper:lower] vector_name;
+type specifies the datatype of the vector. This is usually wire or reg. 
+If you are declaring a input or output port, the type can additionally
+include the port type (e.g., input or output) as well. Some examples:
+
+wire [7:0] w;         // 8-bit wire
+reg  [4:1] x;         // 4-bit reg
+output reg [0:0] y;   // 1-bit reg that is also an output port (this is still a vector)
+input wire [3:-2] z;  // 6-bit wire input (negative ranges are allowed)
+output [3:0] a;       // 4-bit output wire. Type is 'wire' unless specified otherwise.
+wire [0:7] b;         // 8-bit wire where b[0] is the most-significant bit.
+
+EXAMPLE:
+module top_module ( 
+    input wire [2:0] vec,
+    output wire [2:0] outv,
+    output wire o2,
+    output wire o1,
+    output wire o0  ); // Module body starts after module declaration
+assign outv=vec;
+    assign o0=vec[0];
+    assign o1 =vec[1];
+    assign o2 =vec[2];
+endmodule
+
+
+IMPLICIT NETS
+wire [2:0] a, c;   // Two vectors
+assign a = 3'b101;  // a = 101
+assign b = a;       // b =   1  implicitly-created wire matlab verilog ne khud 1-bit ka wire bana 
+                                diya because tumne declare nai kiya
+assign c = b;       // c = 001  <-- bug isiliye kyuki tum chahte the ki c=a aaye but aabhi tumne 
+                                    ye thik se declare nai kiya ki b vector hai and 1-bit wire nai
+my_module i1 (d,e); // d and e are implicitly one-bit wide if not declared.
+                    // This could be a bug if the port was intended to be a vector.
+
+Adding `default_nettype none would make the second line of code an error, 
+which makes the bug more visible.
+
+
+UNPACKED VS. PACKED ARRAYS
+reg [7:0] mem [255:0];   // 256 unpacked elements, each of which is a 8-bit packed vector of reg
+                            here [7:0] ek packed array hai aur [255:0] unpacked 
+                            yaha hum k rahe hai ki hum 256 bit k reg. ko 8 8 bit k packets main
+                            divide kar rahe hai (easy way to understand but not sure if it is right)
+reg mem2 [28:0];         // 29 unpacked elements, each of which is a 1-bit reg.
+
+
+ACCESSING VECTOR ELEMENTS : PART - SELECT
+The part-select operator can be used to access a portion of a vector:
+w[3:0]      // Only the lower 4 bits of w
+x[1]        // The lowest bit of x
+x[1:1]      // ...also the lowest bit of x    
+z[-1:-2]    // Two lowest bits of z
+b[3:0]      // Illegal. Vector part-select must match the direction of the declaration.
+b[0:3]      // The *upper* 4 bits of b.
+assign w[3:0] = b[0:3];    // Assign upper 4 bits of b to lower 4 bits of w. w[3]=b[0], w[2]=b[1], etc.
+
+
+CONCATENATION OF VECTORS
+{3'b111, 3'b000} => 6'b111000
+{1'b1, 1'b0, 3'b101} => 5'b10101
+{4'ha, 4'd10} => 8'b10101010     // 4'ha and 4'd10 are both 4'b1010 in binary
+
+The concatenation operator can be used on both the left and right sides of assignments.
+
+input [15:0] in;
+output [23:0] out;
+assign {out[7:0], out[15:8]} = in;         // Swap two bytes. Right side and left side are both 16-bit vectors.
+assign out[15:0] = {in[7:0], in[15:8]};    // This is the same thing.
+assign out = {in[7:0], in[15:8]};       // This is different. The 16-bit vector on the right is extended to
+                                        // match the 24-bit vector on the left, so out[23:16] are zero.
+                                        // In the first two examples, out[23:16] are not assigned.
+
+{num{vector}}
+This replicates vector by num times. num must be a constant. Both sets of braces are required.
+
+Examples:
+
+{5{1'b1}}           // 5'b11111 (or 5'd31 or 5'h1f)
+{2{a,b,c}}          // The same as {a,b,c,a,b,c}
+{3'd5, {2{3'd6}}}   // 9'b101_110_110. It's a concatenation of 101 with
+                    // the second vector, which is two copies of 3'b110.
+
+
+MODULE K ANDAR MODULE
+### 💡 What does `mod_a` mean?
+
+In Verilog:
+```verilog
+mod_a instance1 (a, b, out);
+```
+
+* `mod_a` is the **name of another module** — a submodule that has been defined **elsewhere**.
+* You are creating an **instance** of that module, just like calling a function or creating an object in other languages.
+* `instance1` is the **instance name** (you can call it anything — like `u1`, `m1`, etc.).
+* `(a, b, out)` are the **signals you're connecting** to the module’s **ports**.
+
+---
+
+### 🧱 Think of it like this:
+
+If this is defined somewhere:
+
+```verilog
+module mod_a (
+    input in1,
+    input in2,
+    output out
+);
+    // Some logic here...
+endmodule
+```
+
+UNNAMED PORTS
+module top_module ( 
+    input a, 
+    input b, 
+    input c,
+    input d,
+    output out1,
+    output out2
+);
+    mod_a instance1(out1, out2, a, b, c, d);
+endmodule
+
+Then when you write:
+
+```verilog
+mod_a instance1 (a, b, out);
+```
+
+You are telling Verilog:
+
+> “Take the module called `mod_a`, create one copy of it called `instance1`, and hook it up to my wires: connect `a` to `in1`, `b` to `in2`, and `out` to `out`.”
+
+---
+
+### 📦 Summary:
+
+| Term          | Meaning                                                     |
+| ------------- | ----------------------------------------------------------- |
+| `mod_a`       | The name of a predefined submodule                          |
+| `instance1`   | The instance name (you choose it)                           |
+| `(a, b, out)` | External wires connected to submodule ports by **position** |
+
+So, **`mod_a` is just the name of the module you are instantiating** — in this problem, it’s already written for you by HDLBits.
+
+ADDER 
+Don't forget to consider carry
+module add1 (
+    input  a, 
+    input  b, 
+    input  cin,
+    output sum, 
+    output cout
+);
+    assign sum  = a ^ b ^ cin;
+    assign cout = (a & b) | (a & cin) | (b & cin);
+endmodule
+This program is perfect for addition and generating carry.
+
+MULTIPLEXER 
+module mux2to1 (
+    input  wire a,
+    input  wire b,
+    input  wire sel,
+    output wire out
+);
+    assign out = sel ? b : a;  // If sel = 1, output = b; else output = a
+endmodule
+
+
+-----NOTE: if i want to convert a lets say 1 bit sub signal to 32 bit use SUB ={32{sub}}--------
+
+
+----------COMBINATIONAL ALWAYS BLOCK-------------
+always @(*) — means "react any time any input changes" → this is how we describe combinational 
+logic.
+out_alwaysblock = a & b; — AND operation using inputs a and b.
+output reg — required because you're assigning to out_alwaysblock inside an always block. 
+(reg here does not mean a register, just a variable you can assign in a procedural block.)
+
+// synthesis verilog_input_version verilog_2001
+module top_module(
+    input clk,
+    input a,
+    input b,
+    output wire out_assign,
+    output reg out_always_comb,
+    output reg out_always_ff   );
+assign out_assign = a^b;
+    always @(*) out_always_comb=a^b;
+    always @(posedge clk) out_always_ff<=a^b;
+endmodule
+
+ BLOCKING VS. NON-BLOCKING ASSIGNMENT IN VERILOG
+
+There are three types of assignments in Verilog:
+Continuous assignments (assign x = y;). Can only be used when not inside a procedure ("always block").
+Procedural blocking assignment: (x = y;). Can only be used inside a procedure.
+Procedural non-blocking assignment: (x <= y;). Can only be used inside a procedure.
+
+In a combinational always block, use blocking assignments. In a clocked always block, use non-blocking assignments.
+
+
+---ALWAYS IF-------
+always @(*) begin
+    if (condition) begin
+        out = x;
+    end
+    else begin
+        out = y;
+    end
+end
+This is equivalent to using a continuous assignment with a conditional operator:
+assign out = (condition) ? x : y;
+
+You can't assign to out_assign inside an always block, because it's declared as a wire.
+
+wire can only be assigned using assign, not inside always.
+
+If you want to assign it in an always block, declare it as reg.
+
+This condition is wrong:
+
+verilog
+Copy
+Edit
+if (sel_b1 & sel_b2 = 0)  // ❌ INVALID
+Should be:
+
+verilog
+Copy
+Edit
+if ((sel_b1 & sel_b2) == 1'b0)
+✅ Fixed Version (Two Outputs: One assign, One always)
+Here’s a correct version using both assign for out_assign and always for out_always:
+
+EXAMPLE:
+module top_module(
+    input  wire a,
+    input  wire b,
+    input  wire sel_b1,
+    input  wire sel_b2,
+    output wire out_assign,
+    output reg  out_always
+); 
+
+    // Using assign (combinational logic)
+    assign out_assign = ((sel_b1 & sel_b2) == 1'b0) ? a : b;
+
+    // Using always block (combinational logic)
+    always @(*) begin 
+        if ((sel_b1 & sel_b2) == 1'b0) begin 
+            out_always = a;
+        end else begin 
+            out_always = b;
+        end
+    end
+endmodule
+
+----ALWAYS CASE-------
+always @(*) begin     // This is a combinational circuit
+    case (in)
+      1'b1: begin 
+               out = 1'b1;  // begin-end if >1 statement
+            end
+      1'b0: out = 1'b0;
+      default: out = 1'bx;
+    endcase
+end
+
+-------ALWAYS CASEZ--------
+EXAMPLE:
+module top_module (
+    input [7:0] in,
+    output reg [2:0] pos );
+always @(*) begin
+    casez (in[7:0])
+        8'bzzzzzzz1: pos = 3'b0;   // in[3:1] can be anything
+        8'bzzzzzz1z: pos = 3'b1;
+        8'bzzzzz1zz: pos = 3'b10;
+        8'bzzzz1zzz: pos = 3'b11;
+        8'bzzz1zzzz: pos = 3'b100;   // in[3:1] can be anything
+        8'bzz1zzzzz: pos = 3'b101;
+        8'bz1zzzzzz: pos = 3'b110;
+        8'b1zzzzzzz: pos = 3'b111;
+        default: pos = 0;
+    endcase
+end
+endmodule
+
+Verilog has a ternary conditional operator ( ? : ) much like C:
+
+(condition ? if_true : if_false)
+This can be used to choose one of two values based on condition (a mux!) on one line,
+without using an if-then inside a combinational always block.
+
+Examples:
+(0 ? 3 : 5)     // This is 5 because the condition is false.
+(sel ? b : a)   // A 2-to-1 multiplexer between a and b selected by sel.
+
+always @(posedge clk)         // A T-flip-flop.
+  q <= toggle ? ~q : q;
+
+always @(*)                   // State transition logic for a one-input FSM
+  case (state)
+    A: next = w ? B : A;
+    B: next = w ? A : B;
+  endcase
+
+assign out = ena ? q : 1'bz;  // A tri-state buffer
+
+((sel[1:0] == 2'h0) ? a :     // A 3-to-1 mux
+ (sel[1:0] == 2'h1) ? b :
+                      c )
+
+-----REDUCTION--------
+& a[3:0]     // AND: a[3]&a[2]&a[1]&a[0]. Equivalent to (a[3:0] == 4'hf)
+| b[3:0]     // OR:  b[3]|b[2]|b[1]|b[0]. Equivalent to (b[3:0] != 4'h0)
+^ c[2:0]     // XOR: c[2]^c[1]^c[0]
+
+------FOR LOOP IN VERILOG------------
+module top_module( 
+    input  [99:0] in,
+    output reg [99:0] out
+);
+
+    integer i;
+    always @(*) begin
+        for (i = 0; i < 100; i = i + 1) begin
+            out[i] = in[99 - i];  // reverse the bits
+        end
+    end
+
+endmodule

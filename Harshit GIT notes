@@ -1,0 +1,71 @@
+STEPS : 
+1. git init : initializes the current repo
+2. git status : gives status about repo
+3. git add "YOUR MESSSAGE" : used to add files OR to stage the file             |
+4. git commit : to save the changes in your local repo after the file is staged |OR just doing git add . will work
+
+to restore it to original form 
+5. git restore --staged filename
+
+to see the entire history of the project : git log
+
+imagine you did some 4-5 changes and you want to go behind 
+do git log copy the commit
+git reset paste commit
+
+abb maan le muje chahta hu ki main project main kuch feature daalo par muje existing code main commit 
+nai karna and uski koi history na ho aur main jab chahu tab vapas la saku the we will use stash
+what we will do is that we will normally start creating new feature and after it "git stash" will work
+abb main naya feature hide toh kar diya but muje ab ye implement karna hai toh "git stash pop"
+abb vapas stash main daalna hai toh "git add ." and then "git stash" 
+abb maan le muje ye jo naya feature jo hai vo muje stash se hi khatam kar dena hai toh "git stash clear"
+
+
+--------------------------GITHUB------------------------------------------
+now if i want to add my github project in git we give command 
+git remote add origin github-repo-ka-link
+
+now you done changes in the project and you want to show it on github 
+git push origin branch_name
+while creating your new branch make sure your master branch is up to date
+
+you want to create new branch:git branch branch_name
+you want to work on some branch : git checkout some_branch_name
+
+now see while contributing to a project you work in your branch and when design is approved you upload 
+your design to main branch 
+so now you feature is approved and you want to add it to main branch : git merge branch_name
+
+abb maanle ek project hai jisme tu contribute nai kar raha par tuje karna toh tu uska copy bana lega aapne 
+account main by "fork" button on github
+
+abb maanle ek forked project hain tuje uske files download karne hai so : git clone project_github_link
+
+abb tune jo project jiss account se fork kiya hai vo upstream ho jayega 
+now if i want to add that github project in git we give command 
+git remote add upstream github-repo-ka-link
+
+abb maanle tune jo project fork kiya usme tune ek branch banai aur usme ek mast sa ek feature daala
+aab jo origin account hai usme tuje ye feature daalna hai aapne project main
+toh tuje unhe pull request dene hai aur wo accept karenge and done (something like this honga )
+
+to force push the changes after the push command use the flag -f
+
+Making forked project even with main project 
+1. Click the button fetch upstream 
+2. a. checkout to main 
+   b. git fetch --all --prune(prune the one that are deleted will also be fetched)
+   c. git reset --hard upstream/main
+   d. git push origin main 
+3. a. git pull upstream main
+   b. git push origin main
+
+you are working and there are many commits and you want to make it into 1 commit
+1. Reset and all commits will be unstaged and there will be 1 commit and again commit to it will 
+   come down to 1 commit
+2. https://www.youtube.com/watch?v=apGV9Kg7ics  1:00:20 
+
+Merge Conflict
+like maanle tune 3rd line pe change kiya and kissi dusre ne bhi 3rd line pe change kiya toh git 
+confuse ho jayega toh ye hai merge conflicts
+toh isse dono baat karke solve karo aur thik karo ab sab chiz k command nai hote
